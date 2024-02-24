@@ -1,4 +1,17 @@
 .navbar {
+    display: grid;
+    grid-template-columns: auto auto;
     background-color: #262929;
     width: fit-content;
+    border-radius: 10px;
+}
+
+.navbarTab {
+    padding: 10px 40px;
+    border-radius: 10px;
+}
+
+.navbarTabActive {
+    background-color: #303333;
+    color: #14CCB7;
 }

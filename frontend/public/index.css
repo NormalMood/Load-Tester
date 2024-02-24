@@ -20,3 +20,10 @@ body {
 #wrapper {
     height: 100vh;
 }
+
+#app-name {
+    display: flex;
+    font-size: 18px;
+    align-items: center;
+    margin-left: 10px;
+}

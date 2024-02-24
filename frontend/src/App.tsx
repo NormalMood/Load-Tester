@@ -6,7 +6,7 @@ function App() {
   return (
     <>
       <Header>
-        <h1>Load Tester</h1>
+        <span id='app-name'>Load Tester</span>
         <Navbar />
       </Header>
       <AppRouter />
