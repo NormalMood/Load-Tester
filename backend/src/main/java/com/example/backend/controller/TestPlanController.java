@@ -25,9 +25,9 @@ public class TestPlanController {
 	
 	private final LTTestPlan testPlan;
 	
-	@PostMapping("/test-plan")
-	public ResponseEntity<?> saveTestPlan(@RequestBody JsonNode testPlanRequest) {
-		return ResponseEntity.ok(testPlan.saveTestPlan(testPlanRequest));
+	@GetMapping("/test-plan")
+	public ResponseEntity<?> findTestPlan() {
+		return ResponseEntity.ok(testPlan.findTestPlan());
 	}
 	
 	@PostMapping("/test-plan/element")

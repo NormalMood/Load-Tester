@@ -11,6 +11,7 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
 
 import com.example.backend.model.JsonFieldModel;
+import com.example.backend.model.TestPlanTypeModel;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.RequiredArgsConstructor;
 
@@ -23,10 +24,16 @@ public class MongoDBDAO implements TestPlanDAO {
 	private final String DEFAULT_COLLECTION = "user1";
 	
 	@Override
-	public Boolean saveTestPlan(JsonNode testPlan) {
+	public Boolean saveTestPlan(Document testPlan) {
 		return !mongoTemplate
-					.insert(Document.parse(testPlan.toString()), DEFAULT_COLLECTION)
+					.insert(testPlan, DEFAULT_COLLECTION)
 					.isEmpty();
+	}
+	
+	@Override
+	public Document findTestPlan() {
+		Query query = new Query(Criteria.where(JsonFieldModel.TYPE).is(TestPlanTypeModel.TEST_PLAN));
+		return mongoTemplate.findOne(query, Document.class, DEFAULT_COLLECTION);
 	}
 
 	@Override

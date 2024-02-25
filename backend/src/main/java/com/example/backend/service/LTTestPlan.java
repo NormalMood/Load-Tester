@@ -9,9 +9,13 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 public interface LTTestPlan {
 	
-	Boolean saveTestPlan(JsonNode testPlan);
+	String getRandomUUID();
 	
-	Boolean saveTestPlanElement(JsonNode testElement);
+	String saveTestPlan();
+	
+	Document findTestPlan();
+	
+	Document saveTestPlanElement(JsonNode testElement);
 	
 	Document findParentAndChildrenByParentGuid(String parentGuid);
 	

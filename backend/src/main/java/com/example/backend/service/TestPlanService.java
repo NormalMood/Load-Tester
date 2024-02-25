@@ -11,6 +11,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import org.bson.Document;
 import org.springframework.stereotype.Service;
@@ -41,23 +42,51 @@ public class TestPlanService implements LTTestPlan {
 	private static List<String[]> testResultList = new ArrayList<>();
 	
 	private final String resultCollectorPath;
-
+	
 	@Override
-	public Boolean saveTestPlan(JsonNode testPlan) {
-		return testPlanDAO
-				.saveTestPlan(
-						((ObjectNode)testPlan)
-							.put(JsonFieldModel.TYPE, TestPlanTypeModel.TEST_PLAN)
-					);
+	public String getRandomUUID() {
+		return UUID.randomUUID().toString();
 	}
 
 	@Override
-	public Boolean saveTestPlanElement(JsonNode testElement) {
-		return testPlanDAO
+	public String saveTestPlan() {
+		String testPlanUUID = getRandomUUID();
+		if (testPlanDAO
+				.saveTestPlan(
+						(new Document()
+							.append(JsonFieldModel.TYPE, TestPlanTypeModel.TEST_PLAN)
+							.append(JsonFieldModel.GUID, testPlanUUID)
+					)))
+			return testPlanUUID;
+		return null;
+	}
+	
+	@Override
+	public Document findTestPlan() {
+		Document testPlan = testPlanDAO.findTestPlan();
+		String testPlanUUID = null;
+		if (testPlan == null) {
+			testPlanUUID = saveTestPlan();
+			testPlan = testPlanDAO.findTestPlan();
+		}
+		if (testPlanUUID != null || testPlan != null)
+			return testPlan;
+		return null;
+	}
+
+	@Override
+	public Document saveTestPlanElement(JsonNode testElement) {
+		ObjectNode child = 
+				((ObjectNode)testElement.get(JsonFieldModel.CHILD))
+					.put(JsonFieldModel.GUID, getRandomUUID());
+		Boolean wasAcknowledged = testPlanDAO
 				.saveTestPlanElement(
 						testElement.get(JsonFieldModel.PARENT_GUID).asText(), 
-						testElement.get(JsonFieldModel.CHILD)
+						child
 				);
+		if (wasAcknowledged)
+			return Document.parse(child.toString());
+		return null;
 	}
 
 	@Override

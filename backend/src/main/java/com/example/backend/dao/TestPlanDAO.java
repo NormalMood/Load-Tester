@@ -8,7 +8,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 public interface TestPlanDAO {
 	
-	Boolean saveTestPlan(JsonNode testPlan);
+	Boolean saveTestPlan(Document testPlan);
+	
+	Document findTestPlan();
 	
 	Boolean saveTestPlanElement(String parentGuid, JsonNode child);
 	
