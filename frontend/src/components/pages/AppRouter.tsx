@@ -1,9 +1,8 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { FC } from 'react';
 import Main from '../layout/Main/Main';
 import { routes } from '../../routes/routes';
 
-const AppRouter: FC = () => {
+const AppRouter = () => {
     return (
         <Routes>
             <Route key={'main'} element={<Main />}>

@@ -1,0 +1,17 @@
+.testScenarios {
+    height: 100%;
+}
+
+.threadGroupTab {
+    display: flex;
+    height: 40px;
+    justify-content: space-between;
+}
+
+.threadGroupTabActive {
+    background-color: #303333;
+}
+
+.threadGroupTabHeaderActive {
+    color: #14CCB7;
+}

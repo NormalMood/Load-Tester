@@ -1,0 +1,12 @@
+.testPlanHeader {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 50px;
+    cursor: pointer;
+}
+
+.testPlanHeaderText {
+    font-weight: bold;
+    font-size: 17px;
+}

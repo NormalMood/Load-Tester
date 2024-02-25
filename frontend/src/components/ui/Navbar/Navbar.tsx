@@ -14,12 +14,12 @@ const Navbar = () => {
     return (
         <nav className={styles.navbar}>
             <Tab 
-                text={'Тест'} 
+                children={'Тест'} 
                 mix={(selectedTabIndex === 0 || window.location.pathname === TEST_PAGE_PATH) ? [styles.navbarTab, styles.navbarTabActive].join(' ') : styles.navbarTab} 
                 onClick={() => { setSelectedTabIndex(0); navigate(TEST_PAGE_PATH); }} 
             />
             <Tab 
-                text={'Итог'} 
+                children={'Итог'} 
                 mix={(selectedTabIndex === 1 || window.location.pathname === TEST_RESULTS_PAGE_PATH) ? [styles.navbarTab, styles.navbarTabActive].join(' ') : styles.navbarTab} 
                 onClick={() => { setSelectedTabIndex(1); navigate(TEST_RESULTS_PAGE_PATH); }} 
             />
