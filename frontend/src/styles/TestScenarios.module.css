@@ -1,5 +1,9 @@
 .testScenarios {
+    display: grid;
+    grid-template-columns: 270px auto;
+    column-gap: 30px;
     height: 100%;
+
 }
 
 .threadGroupTab {

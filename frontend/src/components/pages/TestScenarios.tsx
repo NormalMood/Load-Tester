@@ -4,6 +4,8 @@ import { useState } from 'react';
 import TestPlanHeader from "../ui/TestPlanHeader/TestPlanHeader";
 import Tab from "../ui/Tab/Tab";
 import ThreadGroupHeader from "../ui/ThreadGroupHeader/ThreadGroupHeader";
+import ScenarioDashboard from "../ui/ScenarioDashboard/ScenarioDashboard";
+import { ITestObject } from "../../@types/interfaces/ITestObject";
 
 const TestScenarios = () => {
     const [testPlan, setTestPlan] = useState({
@@ -33,6 +35,20 @@ const TestScenarios = () => {
         }
     ])
     const [selectedTabIndex, setSelectedTabIndex] = useState<number | null>(null)
+    const [scenarioDashboardItems, setScenarioDashboardItems] = useState<ITestObject[]>([
+        {
+            guid: 'http-sampler-1',
+            type: 'httpSampler'
+        },
+        {
+            guid: 'http-sampler-2',
+            type: 'httpSampler'
+        },
+        {
+            guid: 'while-controller-1',
+            type: 'whileController'
+        }
+    ])
     return (
         <div className={styles.testScenarios}>
             <Sidebar>
@@ -55,6 +71,7 @@ const TestScenarios = () => {
                         onClick={() => setSelectedTabIndex(index)}
                     />)}
             </Sidebar>
+            <ScenarioDashboard items={scenarioDashboardItems} />
         </div>
     )
 }
