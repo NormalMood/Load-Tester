@@ -10,7 +10,7 @@ const ScenarioDashboard: FC<IScenarioDashboardProps> = ({items}) => {
     return (
         <div className={styles.scenarioDashboard}>
             {items?.map(item =>
-                <div>{item?.type}</div>)}
+                <div>{item?.guid} | {item?.type}</div>)}
         </div>
     )
 }
