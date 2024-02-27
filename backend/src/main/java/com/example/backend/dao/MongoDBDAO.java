@@ -46,7 +46,7 @@ public class MongoDBDAO implements TestPlanDAO {
 				.wasAcknowledged();
 	}
 	
-	@Override
+	/*@Override
 	public Document findParentByParentGuid(String parentGuid) {
 		Query query = new Query(Criteria
 				.where(JsonFieldModel.GUID)
@@ -55,7 +55,7 @@ public class MongoDBDAO implements TestPlanDAO {
 		Document parent = mongoTemplate
 				.findOne(query, Document.class, DEFAULT_COLLECTION);
 		return parent;
-	}
+	}*/
 
 	@Override
 	public List<Document> findChildrenByParentGuid(String parentGuid) {

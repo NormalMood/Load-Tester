@@ -35,9 +35,9 @@ public class TestPlanController {
 		return ResponseEntity.ok(testPlan.saveTestPlanElement(testElement));
 	}
 	
-	@GetMapping("/test-plan/whole-element")
-	public ResponseEntity<?> findParentAndChildrenByParentGuid(@RequestParam String parentGuid) {
-		return ResponseEntity.ok(testPlan.findParentAndChildrenByParentGuid(parentGuid));
+	@GetMapping("/test-plan/elements")
+	public ResponseEntity<?> findChildrenByParentGuid(@RequestParam String parentGuid) {
+		return ResponseEntity.ok(testPlan.findChildrenByParentGuid(parentGuid));
 	}
 	
 	@PutMapping("/test-plan/thread-group")

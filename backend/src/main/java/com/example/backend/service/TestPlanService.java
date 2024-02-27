@@ -90,7 +90,7 @@ public class TestPlanService implements LTTestPlan {
 	}
 
 	@Override
-	public Document findParentAndChildrenByParentGuid(String parentGuid) {
+	public List<Document> findChildrenByParentGuid(String parentGuid) {
 		/*Document testPlan = testPlanDAO.findParentByParentGuid(parentGuid);
 		if (testPlan == null) {
 			
@@ -101,13 +101,14 @@ public class TestPlanService implements LTTestPlan {
 			child.put(JsonFieldModel.PARENT_GUID, parentGuid);
 		}
 		return parent.append(JsonFieldModel.CHILDREN, children);*/
-		Document parent = testPlanDAO.findParentByParentGuid(parentGuid);
+		//Document parent = testPlanDAO.findParentByParentGuid(parentGuid);
+		//System.out.println("parent: " + parent);
 		List<Document> children = testPlanDAO
 				.findChildrenByParentGuid(parentGuid);
 		for (Document child : children) {
 			child.put(JsonFieldModel.PARENT_GUID, parentGuid);
 		}
-		return parent.append(JsonFieldModel.CHILDREN, children);
+		return children;//parent.append(JsonFieldModel.CHILDREN, children);
 	}
 	
 	@Override

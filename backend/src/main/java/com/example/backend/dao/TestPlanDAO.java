@@ -14,7 +14,7 @@ public interface TestPlanDAO {
 	
 	Boolean saveTestPlanElement(String parentGuid, JsonNode child);
 	
-	Document findParentByParentGuid(String parentGuid);
+	//Document findParentByParentGuid(String parentGuid);
 	
 	List<Document> findChildrenByParentGuid(String parentGuid);
 	
