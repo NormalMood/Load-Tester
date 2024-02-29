@@ -1,5 +1,6 @@
 import { ITestObject } from "../@types/interfaces/ITestObject";
 import { ITestPlan } from "../@types/interfaces/ITestPlan";
+import { INewTestObject } from "../@types/interfaces/INewTestObject";
 import { BASE_API_URL, axiosInstance } from "../api/axiosInstance";
 
 export class TestPlanService {
@@ -21,6 +22,13 @@ export class TestPlanService {
             }
         )
         return response.data
+    }
+
+    static async addTestPlanElement(newElement: INewTestObject) {
+        return await axiosInstance.post<ITestObject>(
+            BASE_API_URL + '/test-plan/element',
+            newElement
+        )
     }
 
 }

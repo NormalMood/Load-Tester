@@ -10,6 +10,29 @@
     display: flex;
     height: 40px;
     justify-content: space-between;
+    position: relative;
+    z-index: 1;
+}
+
+.threadGroupTab::before {
+    content: "";
+    position: absolute;
+    background-color: inherit;
+    height: inherit;
+    width: 100%;
+    margin-left: -10px;
+    z-index: -1;
+}
+
+.threadGroupTab::after {
+    content: "";
+    position: absolute;
+    background-color: inherit;
+    height: inherit;
+    width: 100%;
+    right: 0;
+    margin-right: -10px;
+    z-index: -1;
 }
 
 .threadGroupTabActive {
@@ -18,4 +41,26 @@
 
 .threadGroupTabHeaderActive {
     color: #14CCB7;
+}
+
+.sidebarContentContainer {
+    margin: 0 10px;
+}
+
+.accentButton {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    border: none;
+    background-color: #1D1F1F;
+    height: 40px;
+}
+
+.accentButton > span {
+    color: #14CCB7;
+}
+
+.accentButtonImg {
+    width: 14px;
+    height: 14px;
 }
