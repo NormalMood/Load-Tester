@@ -26,36 +26,36 @@ const TestScenarios = () => {
             )
     }, [testPlan])
 
-    const [selectedTabIndex, setSelectedTabIndex] = useState<number | null>(null)
+    const [selectedThreadGroupGuid, setSelectedThreadGroupGuid] = useState<string | null>(null)
 
     useEffect(() => {
-        if (selectedTabIndex !== null)
-            TestPlanService.getChildrenByParentGuid(threadGroups[selectedTabIndex].guid).then(response => 
+        if (selectedThreadGroupGuid !== null)
+            TestPlanService.getChildrenByParentGuid(selectedThreadGroupGuid).then(response => 
                 setScenarioDashboardItems(response)
             )
-    }, [selectedTabIndex])
+    }, [selectedThreadGroupGuid])
 
     const [scenarioDashboardItems, setScenarioDashboardItems] = useState<ITestObject[]>([])
     return (
         <div className={styles.testScenarios}>
             <Sidebar>
                 <TestPlanHeader />
-                {threadGroups.map((threadGroup, index) =>
+                {threadGroups.map(threadGroup =>
                     <Tab 
                         children={
                             <ThreadGroupHeader 
                                 text={threadGroup?.data?.name} 
-                                mix={selectedTabIndex === index && styles.threadGroupTabHeaderActive} 
+                                mix={selectedThreadGroupGuid === threadGroup.guid && styles.threadGroupTabHeaderActive} 
                             />
                         } 
                         mix={
-                            selectedTabIndex === index 
+                            selectedThreadGroupGuid === threadGroup.guid 
                             ? 
                                 [styles.threadGroupTab, styles.threadGroupTabActive].join(' ') 
                             : 
                                 styles.threadGroupTab
                             } 
-                        onClick={() => setSelectedTabIndex(index)}
+                        onClick={() => setSelectedThreadGroupGuid(threadGroup.guid)}
                     />)}
             </Sidebar>
             <ScenarioDashboard items={scenarioDashboardItems} />
