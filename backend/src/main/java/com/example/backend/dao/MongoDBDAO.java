@@ -43,7 +43,7 @@ public class MongoDBDAO implements TestPlanDAO {
 		update.push(JsonFieldModel.CHILDREN, Document.parse(child.toString()));
 		return mongoTemplate
 				.upsert(query, update, DEFAULT_COLLECTION)
-				.wasAcknowledged();
+				.getModifiedCount() > 0;
 	}
 	
 	/*@Override
@@ -96,7 +96,7 @@ public class MongoDBDAO implements TestPlanDAO {
 		
 		return mongoTemplate
 				.upsert(query, update, DEFAULT_COLLECTION)
-				.wasAcknowledged();
+				.getModifiedCount() > 0;
 	}
 
 	@Override
