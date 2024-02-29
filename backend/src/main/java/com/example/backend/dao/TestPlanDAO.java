@@ -22,6 +22,10 @@ public interface TestPlanDAO {
 	
 	Boolean updateTestPlanElement(String parentGuid, String guid, JsonNode data);
 	
+	Boolean deleteTestPlanElementByParentGuid(String parentGuid);
+	
+	Boolean deleteTestPlanElementByGuid(String parentGuid, String guid);
+	
 	void deleteDefaultUserCollection();
 
 }

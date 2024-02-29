@@ -13,6 +13,8 @@ import org.springframework.stereotype.Repository;
 import com.example.backend.model.JsonFieldModel;
 import com.example.backend.model.TestPlanTypeModel;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.mongodb.client.result.UpdateResult;
+
 import lombok.RequiredArgsConstructor;
 
 @Repository
@@ -41,9 +43,8 @@ public class MongoDBDAO implements TestPlanDAO {
 		Query query = new Query(Criteria.where(JsonFieldModel.PARENT_GUID).is(parentGuid));
 		Update update = new Update();
 		update.push(JsonFieldModel.CHILDREN, Document.parse(child.toString()));
-		return mongoTemplate
-				.upsert(query, update, DEFAULT_COLLECTION)
-				.getModifiedCount() > 0;
+		UpdateResult result = mongoTemplate.upsert(query, update, DEFAULT_COLLECTION);
+		return result.getUpsertedId() != null || result.getModifiedCount() > 0;
 	}
 	
 	/*@Override
@@ -94,9 +95,19 @@ public class MongoDBDAO implements TestPlanDAO {
 		Update update = new Update();
 		update.set(JsonFieldModel.CHILDREN + ".$." + JsonFieldModel.DATA, Document.parse(data.toString()));
 		
-		return mongoTemplate
-				.upsert(query, update, DEFAULT_COLLECTION)
-				.getModifiedCount() > 0;
+		UpdateResult result = mongoTemplate.upsert(query, update, DEFAULT_COLLECTION);
+		return result.getUpsertedId() != null || result.getModifiedCount() > 0;
+	}
+	
+	@Override
+	public Boolean deleteTestPlanElementByParentGuid(String parentGuid) {
+		
+		return false;
+	}
+	
+	@Override
+	public Boolean deleteTestPlanElementByGuid(String parentGuid, String guid) {
+		return false;
 	}
 
 	@Override

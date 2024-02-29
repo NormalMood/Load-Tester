@@ -50,6 +50,11 @@ public class TestPlanController {
 		return ResponseEntity.ok(testPlan.updateTestPlanElements(testElements));
 	}
 	
+	@DeleteMapping("/test-plan/element")
+	public ResponseEntity<?> deleteTestPlanElement(@RequestParam String parentGuid, @RequestParam String guid) {
+		return ResponseEntity.ok(testPlan.deleteTestPlanElement(parentGuid, guid));
+	}
+	
 	@DeleteMapping("/collection")
 	public ResponseEntity<?> deleteDefaultUserCollection() {
 		testPlan.deleteDefaultUserCollection();

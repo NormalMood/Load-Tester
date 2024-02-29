@@ -22,6 +22,8 @@ public interface LTTestPlan {
 	Boolean updateThreadGroup(JsonNode threadGroup);
 	
 	Boolean updateTestPlanElements(JsonNode[] testElements);
+	
+	Boolean deleteTestPlanElement(String parentGuid, String guid);
 
 	void deleteDefaultUserCollection();
 	

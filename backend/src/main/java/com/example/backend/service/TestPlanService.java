@@ -79,12 +79,12 @@ public class TestPlanService implements LTTestPlan {
 		ObjectNode child = 
 				((ObjectNode)testElement.get(JsonFieldModel.CHILD))
 					.put(JsonFieldModel.GUID, getRandomUUID());
-		Boolean wasAcknowledged = testPlanDAO
+		Boolean wasSaved = testPlanDAO
 				.saveTestPlanElement(
 						testElement.get(JsonFieldModel.PARENT_GUID).asText(), 
 						child
 				);
-		if (wasAcknowledged)
+		if (wasSaved)
 			return Document.parse(child.toString());
 		return null;
 	}
@@ -135,6 +135,11 @@ public class TestPlanService implements LTTestPlan {
 					);
 		}
 		return !resultSet.contains(false);
+	}
+	
+	@Override
+	public Boolean deleteTestPlanElement(String parentGuid, String guid) {
+		return testPlanDAO.deleteTestPlanElementByParentGuid(guid); //delete as a parent
 	}
 
 	@Override
