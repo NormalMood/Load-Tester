@@ -12,11 +12,12 @@ import { IThreadGroup } from "../../@types/interfaces/IThreadGroup";
 import Button from "../ui/Button/Button";
 import { THREAD_GROUP } from "../../@types/consts/testObjectTypes";
 import { OK_RESPONSE_CODE } from "../../api/axiosInstance";
-import { getNewThreadGroupName } from "../../utils/utils";
 
 const TestScenarios = () => {
     const [testPlan, setTestPlan] = useState<ITestPlan>()
     const [threadGroups, setThreadGroups] = useState<IThreadGroup[]>([])
+
+    const NEW_THREAD_GROUP_NAME = 'Тестовый сценарий'
 
     useEffect(() => {
         TestPlanService.getTestPlan().then(response =>
@@ -48,7 +49,7 @@ const TestScenarios = () => {
             child: {
                 type: THREAD_GROUP,
                 data: {
-                    name: getNewThreadGroupName(threadGroups)
+                    name: NEW_THREAD_GROUP_NAME
                 }
             }
         }).then(response => {
