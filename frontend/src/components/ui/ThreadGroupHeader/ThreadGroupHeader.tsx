@@ -12,9 +12,6 @@ const ThreadGroupHeader: FC<IThreadGroupHeaderProps> = ({text, mix}) => {
             <span className={[styles.threadGroupHeaderText, mix].join(' ')}>
                 {text}
             </span>
-            <span>
-                +
-            </span>
         </>
     )
 }

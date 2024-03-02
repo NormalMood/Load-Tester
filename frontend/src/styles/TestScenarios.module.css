@@ -39,6 +39,16 @@
     background-color: #303333;
 }
 
+.threadGroupDeleteImg {
+    width: 20px;
+    height: 20px;
+    align-self: center;
+}
+
+.threadGroupTab:not(:hover) .threadGroupDeleteImg {
+    display: none;
+}
+
 .threadGroupTabHeaderActive {
     color: #14CCB7;
 }

@@ -38,12 +38,13 @@ const TestScenarios = () => {
             TestPlanService.getChildrenByParentGuid(selectedThreadGroupGuid).then(response => 
                 setScenarioDashboardItems(response)
             )
+        else
+            setScenarioDashboardItems([])
     }, [selectedThreadGroupGuid])
 
     const [scenarioDashboardItems, setScenarioDashboardItems] = useState<ITestObject[]>([])
 
     const addThreadGroup = async () => {
-        console.log('test')
         await TestPlanService.addTestPlanElement({
             parentGuid: testPlan?.guid,
             child: {
@@ -58,6 +59,19 @@ const TestScenarios = () => {
         })
     }
 
+    const deleteThreadGroup = async (e: React.MouseEvent<HTMLImageElement, MouseEvent>, guid: string) => {
+        e.stopPropagation()
+        console.log(guid)
+        if (testPlan !== undefined)
+            await TestPlanService.deleteTestPlanElement(testPlan.guid, guid).then(response => {
+                if (response.status === OK_RESPONSE_CODE && response.data) {
+                    setThreadGroups(threadGroups.filter(threadGroup => threadGroup.guid !== guid))
+                    if (selectedThreadGroupGuid === guid)
+                        setSelectedThreadGroupGuid(null)
+                }
+            })
+    }
+
     return (
         <div className={styles.testScenarios}>
             <Sidebar>
@@ -66,10 +80,17 @@ const TestScenarios = () => {
                     {threadGroups.map(threadGroup =>
                         <Tab 
                             children={
-                                <ThreadGroupHeader 
-                                    text={threadGroup?.data?.name} 
-                                    mix={selectedThreadGroupGuid === threadGroup.guid && styles.threadGroupTabHeaderActive} 
-                                />
+                                <>
+                                    <ThreadGroupHeader 
+                                        text={threadGroup?.data?.name} 
+                                        mix={selectedThreadGroupGuid === threadGroup.guid && styles.threadGroupTabHeaderActive} 
+                                    />
+                                    <img 
+                                        className={styles.threadGroupDeleteImg} 
+                                        src='./images/delete_cross.svg' 
+                                        onClick={(e) => deleteThreadGroup(e, threadGroup.guid)}
+                                    />
+                                </>
                             } 
                             mix={
                                 selectedThreadGroupGuid === threadGroup.guid 

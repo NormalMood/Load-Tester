@@ -31,4 +31,16 @@ export class TestPlanService {
         )
     }
 
+    static async deleteTestPlanElement(parentGuid: string, guid: string) {
+        return await axiosInstance.delete<Boolean>(
+            BASE_API_URL + '/test-plan/element',
+            {
+                params: {
+                    parentGuid,
+                    guid
+                }
+            }
+        )
+    }
+
 }
