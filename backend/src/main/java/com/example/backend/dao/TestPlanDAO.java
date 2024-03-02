@@ -26,6 +26,8 @@ public interface TestPlanDAO {
 	
 	Boolean deleteTestPlanElementByGuid(String parentGuid, String guid);
 	
+	int findChildrenQuantityByParentGuid(String parentGuid);
+	
 	void deleteDefaultUserCollection();
 
 }

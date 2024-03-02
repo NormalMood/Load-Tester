@@ -140,7 +140,11 @@ public class TestPlanService implements LTTestPlan {
 	@Override
 	public Boolean deleteTestPlanElement(String parentGuid, String guid) {
 		testPlanDAO.deleteTestPlanElementByParentGuid(guid); //delete as a parent
-		return testPlanDAO.deleteTestPlanElementByGuid(parentGuid, guid); //delete as a child
+		Boolean wasDeletedAsChild = testPlanDAO.deleteTestPlanElementByGuid(parentGuid, guid); //delete as a child
+		Boolean wasParentDeleted = false;
+		if (testPlanDAO.findChildrenQuantityByParentGuid(parentGuid) == 0)
+			wasParentDeleted = testPlanDAO.deleteTestPlanElementByParentGuid(parentGuid); //delete empty parent
+		return wasDeletedAsChild || wasParentDeleted;
 	}
 
 	@Override

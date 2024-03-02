@@ -114,6 +114,15 @@ public class MongoDBDAO implements TestPlanDAO {
 				.updateFirst(query, update, DEFAULT_COLLECTION)
 				.getModifiedCount() > 0;
 	}
+	
+	@Override
+	public int findChildrenQuantityByParentGuid(String parentGuid) {
+		Query query = new Query(Criteria.where(JsonFieldModel.PARENT_GUID).is(parentGuid));
+		return mongoTemplate
+				.findOne(query, Document.class, DEFAULT_COLLECTION)
+				.get(JsonFieldModel.CHILDREN, ArrayList.class)
+				.size();
+	}
 
 	@Override
 	public void deleteDefaultUserCollection() {
