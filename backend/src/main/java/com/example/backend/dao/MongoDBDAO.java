@@ -101,13 +101,18 @@ public class MongoDBDAO implements TestPlanDAO {
 	
 	@Override
 	public Boolean deleteTestPlanElementByParentGuid(String parentGuid) {
-		
-		return false;
+		Query query = new Query(Criteria.where(JsonFieldModel.PARENT_GUID).is(parentGuid));
+		return mongoTemplate.remove(query, DEFAULT_COLLECTION).getDeletedCount() > 0;
 	}
 	
 	@Override
 	public Boolean deleteTestPlanElementByGuid(String parentGuid, String guid) {
-		return false;
+		Query query = new Query(Criteria.where(JsonFieldModel.PARENT_GUID).is(parentGuid));
+		Update update = new Update();
+		update.pull(JsonFieldModel.CHILDREN, new Query(Criteria.where(JsonFieldModel.GUID).is(guid)));
+		return mongoTemplate
+				.updateFirst(query, update, DEFAULT_COLLECTION)
+				.getModifiedCount() > 0;
 	}
 
 	@Override
