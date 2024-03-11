@@ -1,3 +1,10 @@
 .scenarioDashboard {
+    display: grid;
+    grid-template-columns: 70px auto 50px;
     background-color: #1D1F1F;
+}
+
+.scenarioObjectsContainer {
+    grid-column: 2;
+    margin-top: 50px;
 }

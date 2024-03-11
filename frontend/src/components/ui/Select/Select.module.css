@@ -1,0 +1,8 @@
+.select {
+    background-color: #EDECEC;
+    color: #6D6E6E;
+}
+
+.select > option {
+    color: #6D6E6E;
+}

@@ -1,0 +1,74 @@
+.httpSampler {
+    background-color: #303333;
+    border-radius: 10px;
+    margin-bottom: 30px;
+    padding: 20px 0;
+}
+
+.httpSamplerHeader {
+    display: grid;
+    grid-template-columns: 60px max-content;
+}
+
+.expandSamplerImgContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.expandSamplerImg {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    transform: rotate(-90deg);
+    transition: all 0.2s;
+}
+
+.expandSamplerImgOpened {
+    transform: rotate(0deg);
+}
+
+.httpSamplerBody {
+    margin-left: 60px;
+    margin-top: 15px;
+}
+
+.httpSamplerBodyHidden {
+    display: none;
+}
+
+.httpSamplerHeaderContentContainer {
+    display: grid;
+    row-gap: 5px;
+}
+
+.tabsContainer {
+    display: grid;
+    grid-template-columns: repeat(3, max-content);
+    column-gap: 10px;
+}
+
+.tabSelected > span {
+    color: #14CCB7;
+}
+
+.tabBody {
+    margin-top: 10px;
+    border-top: #1D1F1F 1px solid;
+}
+
+.tabContent {
+    padding: 20px 0;
+}
+
+.requestTabContent {
+    display: grid;
+    width: fit-content;
+    row-gap: 10px;
+}
+
+.methodURLContainer {
+    display: grid;
+    column-gap: 10px;
+    grid-template-columns: repeat(2, min-content);
+}
