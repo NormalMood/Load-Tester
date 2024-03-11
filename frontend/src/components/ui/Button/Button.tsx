@@ -3,7 +3,7 @@ import styles from './Button.module.css';
 
 interface IButtonProps {
     children: React.ReactNode;
-    mix?: React.HTMLAttributes<string>;
+    mix?: React.HTMLAttributes<string> | string;
     onClick?: () => void;
 }
 

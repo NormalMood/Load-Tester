@@ -5,6 +5,41 @@
 }
 
 .scenarioObjectsContainer {
+    position: relative;
     grid-column: 2;
     margin-top: 50px;
+    height: fit-content;
+}
+
+.objectsOptionPopup {
+    display: flex;
+    position: absolute;
+    width: fit-content;
+    height: fit-content;
+    border-radius: 10px;
+    background-color: #303333;
+    box-shadow: 0 0 10px #000;
+    margin-top: -100px;
+}
+
+.objectsOptionPopupHidden {
+    display: none;
+}
+
+.optionContainer {
+    display: flex;
+    background-color: #1D1F1F;
+    border-radius: 10px;
+    margin: 15px 18px;
+    padding: 5px 20px 5px 5px;
+    justify-content: center;
+}
+
+.requestImg {
+    width: 25px;
+    height: 25px;
+}
+
+.newObjectButton {
+    width: unset;
 }
