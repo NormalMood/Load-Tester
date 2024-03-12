@@ -96,7 +96,15 @@ const TestScenarios = () => {
         }
     }
 
-    
+    const deleteItem = async (guid: string) => {
+        if (selectedThreadGroupGuid !== null)
+            await TestPlanService.deleteTestPlanElement(selectedThreadGroupGuid, guid)
+                .then(response => {
+                    if (response.status === OK_RESPONSE_CODE)
+                        if (scenarioDashboardItems)
+                            setScenarioDashboardItems(scenarioDashboardItems?.filter(item => item.guid !== guid))
+                })
+    }
 
     return (
         <div className={styles.testScenarios}>
@@ -136,7 +144,7 @@ const TestScenarios = () => {
             </Sidebar>
             <ScenarioDashboard 
                 addItemCallback={addItem} 
-                deleteItemCallback={() => {}}
+                deleteItemCallback={deleteItem}
                 items={scenarioDashboardItems} 
             />
         </div>
