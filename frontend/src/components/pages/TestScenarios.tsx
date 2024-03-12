@@ -39,10 +39,10 @@ const TestScenarios = () => {
                 setScenarioDashboardItems(response)
             )
         else
-            setScenarioDashboardItems([])
+            setScenarioDashboardItems(null)
     }, [selectedThreadGroupGuid])
 
-    const [scenarioDashboardItems, setScenarioDashboardItems] = useState<ITestObject[]>([])
+    const [scenarioDashboardItems, setScenarioDashboardItems] = useState<ITestObject[] | null>(null)
 
     const addThreadGroup = async () => {
         await TestPlanService.addTestPlanElement({

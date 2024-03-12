@@ -1,25 +1,29 @@
 .scenarioDashboard {
     display: grid;
-    grid-template-columns: 70px auto 50px;
+    grid-template-columns: auto 50px;
     background-color: #1D1F1F;
 }
 
 .scenarioObjectsContainer {
+    display: grid;
+    grid-template-columns: 70px auto;
     position: relative;
-    grid-column: 2;
+    grid-column: 1;
     margin-top: 50px;
     height: fit-content;
 }
 
 .objectsOptionPopup {
     display: flex;
+    grid-column: 2;
     position: absolute;
     width: fit-content;
     height: fit-content;
     border-radius: 10px;
     background-color: #303333;
     box-shadow: 0 0 10px #000;
-    margin-top: -100px;
+    bottom: 0;
+    margin-bottom: 40px;
 }
 
 .objectsOptionPopupHidden {
@@ -33,6 +37,7 @@
     margin: 15px 18px;
     padding: 5px 20px 5px 5px;
     justify-content: center;
+    cursor: pointer;
 }
 
 .requestImg {
@@ -42,4 +47,9 @@
 
 .newObjectButton {
     width: unset;
+    grid-column: 2;
+}
+
+.scenarioObjectContainer {
+    grid-column: 2;
 }

@@ -6,7 +6,7 @@ import Button from '../Button/Button';
 import testScenarioStyles from '../../../styles/TestScenarios.module.css';
 
 interface IScenarioDashboardProps {
-    items?: ITestObject[];
+    items?: ITestObject[] | null;
 }
 
 const ScenarioDashboard: FC<IScenarioDashboardProps> = ({items}) => {
@@ -28,17 +28,35 @@ const ScenarioDashboard: FC<IScenarioDashboardProps> = ({items}) => {
         <div className={styles.scenarioDashboard}>
             <div className={styles.scenarioObjectsContainer}>
                 {items?.map(item =>
-                    <HttpSampler httpSampler={item} />)}
-                <Button 
-                    children={<span><img src='./images/plus.svg' className={testScenarioStyles.accentButtonImg} />&nbsp;Элемент сценария</span>}  
-                    mix={[testScenarioStyles.accentButton, styles.newObjectButton].join(' ')}
-                    onClick={() => setIsObjectsOptionVisible(true)}
-                />
+                    <>
+                        <div className={styles.scenarioObjectContainer}>
+                            <HttpSampler httpSampler={item} />
+                        </div>
+                    </>
+                )}
+                {items !== null &&
+                    <Button 
+                        children={
+                            <span>
+                                <img 
+                                    src='./images/plus.svg' 
+                                    className={testScenarioStyles.accentButtonImg} 
+                                />
+                                &nbsp;Элемент сценария
+                            </span>
+                        }  
+                        mix={[testScenarioStyles.accentButton, styles.newObjectButton].join(' ')}
+                        onClick={() => setIsObjectsOptionVisible(true)}
+                    />
+                }
                 <div 
                     ref={objectsOptionRef} 
                     className={isObjectsOptionVisible? styles.objectsOptionPopup : styles.objectsOptionPopupHidden}
                 >
-                    <div className={styles.optionContainer}>
+                    <div 
+                        className={styles.optionContainer}
+                        onClick={() => setIsObjectsOptionVisible(false)}
+                    >
                         <img src='./images/request.svg' className={styles.requestImg} />
                         <span>&nbsp;&nbsp;Запрос</span>
                     </div>
