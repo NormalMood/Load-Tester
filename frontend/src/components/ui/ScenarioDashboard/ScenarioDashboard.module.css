@@ -11,17 +11,13 @@
     grid-column: 1;
     margin-top: 50px;
     height: fit-content;
+    row-gap: 30px;
 }
 
 .objectsOptionPopup {
     display: flex;
     grid-column: 2;
     position: absolute;
-    width: fit-content;
-    height: fit-content;
-    border-radius: 10px;
-    background-color: #303333;
-    box-shadow: 0 0 10px #000;
     bottom: 0;
     margin-bottom: 40px;
 }
@@ -46,10 +42,24 @@
 }
 
 .newObjectButton {
-    width: unset;
+    width: fit-content;
     grid-column: 2;
 }
 
 .scenarioObjectContainer {
     grid-column: 2;
+}
+
+.deleteImgContainer {
+    display: flex;
+    position: relative;
+    grid-column: 1;
+    justify-content: center;
+    align-items: center;
+}
+
+.deleteImg {
+    width: 25px;
+    height: 25px;
+    cursor: pointer;
 }

@@ -1,0 +1,7 @@
+.popup {
+    width: fit-content;
+    height: fit-content;
+    border-radius: 10px;
+    background-color: #303333;
+    box-shadow: 0 0 10px #000;
+}

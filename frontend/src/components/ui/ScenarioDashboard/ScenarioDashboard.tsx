@@ -4,6 +4,7 @@ import styles from './ScenarioDashboard.module.css';
 import HttpSampler from '../HttpSampler/HttpSampler';
 import Button from '../Button/Button';
 import testScenarioStyles from '../../../styles/TestScenarios.module.css';
+import Popup from '../Popup/Popup';
 
 interface IScenarioDashboardProps {
     items?: ITestObject[] | null;
@@ -11,9 +12,9 @@ interface IScenarioDashboardProps {
 
 const ScenarioDashboard: FC<IScenarioDashboardProps> = ({items}) => {
     const [isObjectsOptionVisible, setIsObjectsOptionVisible] = useState(false)
-    const objectsOptionRef = useRef<HTMLDivElement>(null)
+    const objectsOptionRef = useRef<any>()
     const handleClickOutside = (e: any) => {
-        if (objectsOptionRef.current && !objectsOptionRef.current.contains(e.target))
+        if (objectsOptionRef.current && !objectsOptionRef.current.contains(e.target)) 
             setIsObjectsOptionVisible(false)
     }
 
@@ -24,13 +25,44 @@ const ScenarioDashboard: FC<IScenarioDashboardProps> = ({items}) => {
         }
     }, [])
 
+    const [deleteImgVisibility, setDeleteImgVisibility] = useState<any[]>([])
+
+    const changeDeleteImgVisibility = (index: number, display: {display: 'block'} | {display: 'none'}) => {
+        const deleteImgVisibilityUpdated = [...deleteImgVisibility]
+        deleteImgVisibilityUpdated[index] = display
+        setDeleteImgVisibility(deleteImgVisibilityUpdated)
+    }
+    
+
+    useEffect(() => {
+        setDeleteImgVisibility(new Array(items?.length).fill({display: 'none'}))
+    }, [items])
+
+
     return (
         <div className={styles.scenarioDashboard}>
             <div className={styles.scenarioObjectsContainer}>
-                {items?.map(item =>
+                {items?.map((item, index) =>
                     <>
-                        <div className={styles.scenarioObjectContainer}>
-                            <HttpSampler httpSampler={item} />
+                        <div 
+                            className={styles.deleteImgContainer}
+                            onMouseEnter={e => changeDeleteImgVisibility(index, {display: 'block'})}
+                            onMouseLeave={e => changeDeleteImgVisibility(index, {display: 'none'})}
+                        >
+                            <img 
+                                src='./images/delete.svg' 
+                                className={styles.deleteImg} style={deleteImgVisibility[index]} 
+                                onClick={() => {}}
+                            />
+                        </div>
+                        <div 
+                            className={styles.scenarioObjectContainer}
+                            onMouseEnter={e => changeDeleteImgVisibility(index, {display: 'block'})}
+                            onMouseLeave={e => changeDeleteImgVisibility(index, {display: 'none'})}
+                        >
+                            <HttpSampler 
+                                httpSampler={item} 
+                            />
                         </div>
                     </>
                 )}
@@ -49,8 +81,8 @@ const ScenarioDashboard: FC<IScenarioDashboardProps> = ({items}) => {
                         onClick={() => setIsObjectsOptionVisible(true)}
                     />
                 }
-                <div 
-                    ref={objectsOptionRef} 
+                <Popup 
+                    ref={objectsOptionRef}
                     className={isObjectsOptionVisible? styles.objectsOptionPopup : styles.objectsOptionPopupHidden}
                 >
                     <div 
@@ -60,7 +92,7 @@ const ScenarioDashboard: FC<IScenarioDashboardProps> = ({items}) => {
                         <img src='./images/request.svg' className={styles.requestImg} />
                         <span>&nbsp;&nbsp;Запрос</span>
                     </div>
-                </div>
+                </Popup>
             </div>
         </div>
     )
