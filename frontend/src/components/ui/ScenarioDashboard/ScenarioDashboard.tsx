@@ -5,12 +5,15 @@ import HttpSampler from '../HttpSampler/HttpSampler';
 import Button from '../Button/Button';
 import testScenarioStyles from '../../../styles/TestScenarios.module.css';
 import Popup from '../Popup/Popup';
+import { HTTP_SAMPLER } from '../../../@types/consts/testObjectTypes';
 
 interface IScenarioDashboardProps {
     items?: ITestObject[] | null;
+    addItemCallback: (objectType: string) => void;
+    deleteItemCallback: (guid: string) => void;
 }
 
-const ScenarioDashboard: FC<IScenarioDashboardProps> = ({items}) => {
+const ScenarioDashboard: FC<IScenarioDashboardProps> = ({items, addItemCallback, deleteItemCallback}) => {
     const [isObjectsOptionVisible, setIsObjectsOptionVisible] = useState(false)
     const objectsOptionRef = useRef<any>()
     const handleClickOutside = (e: any) => {
@@ -52,7 +55,7 @@ const ScenarioDashboard: FC<IScenarioDashboardProps> = ({items}) => {
                             <img 
                                 src='./images/delete.svg' 
                                 className={styles.deleteImg} style={deleteImgVisibility[index]} 
-                                onClick={() => {}}
+                                onClick={() => deleteItemCallback(item.guid)}
                             />
                         </div>
                         <div 
@@ -87,7 +90,7 @@ const ScenarioDashboard: FC<IScenarioDashboardProps> = ({items}) => {
                 >
                     <div 
                         className={styles.optionContainer}
-                        onClick={() => setIsObjectsOptionVisible(false)}
+                        onClick={() => { addItemCallback(HTTP_SAMPLER); setIsObjectsOptionVisible(false); }}
                     >
                         <img src='./images/request.svg' className={styles.requestImg} />
                         <span>&nbsp;&nbsp;Запрос</span>

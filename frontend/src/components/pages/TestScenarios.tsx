@@ -10,14 +10,16 @@ import { TestPlanService } from "../../service/TestPlanService";
 import { ITestPlan } from "../../@types/interfaces/ITestPlan";
 import { IThreadGroup } from "../../@types/interfaces/IThreadGroup";
 import Button from "../ui/Button/Button";
-import { THREAD_GROUP } from "../../@types/consts/testObjectTypes";
+import { HTTP_SAMPLER, THREAD_GROUP } from "../../@types/consts/testObjectTypes";
 import { OK_RESPONSE_CODE } from "../../api/axiosInstance";
+import { INewTestObject } from "../../@types/interfaces/INewTestObject";
 
 const TestScenarios = () => {
     const [testPlan, setTestPlan] = useState<ITestPlan>()
     const [threadGroups, setThreadGroups] = useState<IThreadGroup[]>([])
 
     const NEW_THREAD_GROUP_NAME = 'Тестовый сценарий'
+    const NEW_HTTP_SAMPLER_NAME = 'Запрос'
 
     useEffect(() => {
         TestPlanService.getTestPlan().then(response =>
@@ -72,6 +74,30 @@ const TestScenarios = () => {
             })
     }
 
+    const addItem = async (objectType: string) => {
+        if (objectType === HTTP_SAMPLER) {
+            const newHTTPSampler: INewTestObject = {
+                parentGuid: selectedThreadGroupGuid as string,
+                child: {
+                    type: HTTP_SAMPLER,
+                    data: {
+                        name: NEW_HTTP_SAMPLER_NAME
+                    }
+                }
+            }
+            await TestPlanService.addTestPlanElement(newHTTPSampler)
+                .then(response => {
+                    if (response.status === OK_RESPONSE_CODE)
+                        if (scenarioDashboardItems === null)
+                            setScenarioDashboardItems([response.data])
+                        else
+                            setScenarioDashboardItems([...scenarioDashboardItems, response.data])
+                })
+        }
+    }
+
+    
+
     return (
         <div className={styles.testScenarios}>
             <Sidebar>
@@ -108,7 +134,11 @@ const TestScenarios = () => {
                     />
                 </div>
             </Sidebar>
-            <ScenarioDashboard items={scenarioDashboardItems} />
+            <ScenarioDashboard 
+                addItemCallback={addItem} 
+                deleteItemCallback={() => {}}
+                items={scenarioDashboardItems} 
+            />
         </div>
     )
 }
