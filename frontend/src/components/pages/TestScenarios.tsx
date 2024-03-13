@@ -74,7 +74,7 @@ const TestScenarios = () => {
 
     const addItem = async (objectType: string) => {
         if (objectType === HTTP_SAMPLER) {
-            const newHTTPSampler: INewHttpSampler = {
+            const newHttpSampler: INewHttpSampler = {
                 parentGuid: selectedThreadGroupGuid as string,
                 child: {
                     type: HTTP_SAMPLER,
@@ -84,13 +84,15 @@ const TestScenarios = () => {
                     }
                 }
             }
-            await TestPlanService.addTestPlanElement(newHTTPSampler)
+            await TestPlanService.addTestPlanElement(newHttpSampler)
                 .then(response => {
-                    if (response.status === OK_RESPONSE_CODE)
+                    if (response.status === OK_RESPONSE_CODE) {
+                        response.data.parentGuid = selectedThreadGroupGuid as string
                         if (scenarioDashboardItems === null)
                             setScenarioDashboardItems([response.data])
                         else
                             setScenarioDashboardItems([...scenarioDashboardItems, response.data])
+                        console.log(response.data)}
                 })
         }
     }

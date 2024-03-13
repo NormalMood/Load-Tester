@@ -9,6 +9,7 @@ import { HTTP_SAMPLER } from '../../../@types/consts/testObjectTypes';
 import useUpdatedObjectsStore from '../../../store/useUpdatedObjectsStore';
 import { TestPlanService } from '../../../service/TestPlanService';
 import { getObjectsArrayFromMap } from '../../../utils/Utils';
+import { OK_RESPONSE_CODE } from '../../../api/axiosInstance';
 
 interface IScenarioDashboardProps {
     items?: ITestObject[] | null;
@@ -45,10 +46,15 @@ const ScenarioDashboard: FC<IScenarioDashboardProps> = ({items, addItemCallback,
     }, [items])
 
     const guidToObject = useUpdatedObjectsStore(state => state.guidToObject)
+    const clearMap = useUpdatedObjectsStore(state => state.clear)
 
     const saveObjects = async () => {
+        console.log(getObjectsArrayFromMap(guidToObject))
         if (guidToObject.size > 0)
-            await TestPlanService.updateTestPlanElements(getObjectsArrayFromMap(guidToObject))
+            await TestPlanService.updateTestPlanElements(getObjectsArrayFromMap(guidToObject)).then(response => {
+                if (response.status === OK_RESPONSE_CODE)
+                    clearMap()
+            })
     }
 
     return (
