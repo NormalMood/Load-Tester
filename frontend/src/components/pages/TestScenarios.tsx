@@ -12,14 +12,12 @@ import { IThreadGroup } from "../../@types/interfaces/IThreadGroup";
 import Button from "../ui/Button/Button";
 import { HTTP_SAMPLER, THREAD_GROUP } from "../../@types/consts/testObjectTypes";
 import { OK_RESPONSE_CODE } from "../../api/axiosInstance";
-import { INewTestObject } from "../../@types/interfaces/INewTestObject";
+import { INewHttpSampler } from "../../@types/interfaces/INewHttpSampler";
+import { NEW_HTTP_SAMPLER_METHOD, NEW_HTTP_SAMPLER_NAME, NEW_THREAD_GROUP_NAME } from "../../@types/consts/defaultNames";
 
 const TestScenarios = () => {
     const [testPlan, setTestPlan] = useState<ITestPlan>()
     const [threadGroups, setThreadGroups] = useState<IThreadGroup[]>([])
-
-    const NEW_THREAD_GROUP_NAME = 'Тестовый сценарий'
-    const NEW_HTTP_SAMPLER_NAME = 'Запрос'
 
     useEffect(() => {
         TestPlanService.getTestPlan().then(response =>
@@ -48,7 +46,7 @@ const TestScenarios = () => {
 
     const addThreadGroup = async () => {
         await TestPlanService.addTestPlanElement({
-            parentGuid: testPlan?.guid,
+            parentGuid: testPlan?.guid as string,
             child: {
                 type: THREAD_GROUP,
                 data: {
@@ -76,11 +74,12 @@ const TestScenarios = () => {
 
     const addItem = async (objectType: string) => {
         if (objectType === HTTP_SAMPLER) {
-            const newHTTPSampler: INewTestObject = {
+            const newHTTPSampler: INewHttpSampler = {
                 parentGuid: selectedThreadGroupGuid as string,
                 child: {
                     type: HTTP_SAMPLER,
                     data: {
+                        method: NEW_HTTP_SAMPLER_METHOD,
                         name: NEW_HTTP_SAMPLER_NAME
                     }
                 }

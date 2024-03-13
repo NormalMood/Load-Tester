@@ -1,6 +1,6 @@
+import { INewTestObject } from "../@types/interfaces/INewTestObject";
 import { ITestObject } from "../@types/interfaces/ITestObject";
 import { ITestPlan } from "../@types/interfaces/ITestPlan";
-import { INewTestObject } from "../@types/interfaces/INewTestObject";
 import { BASE_API_URL, axiosInstance } from "../api/axiosInstance";
 
 export class TestPlanService {
@@ -40,6 +40,13 @@ export class TestPlanService {
                     guid
                 }
             }
+        )
+    }
+
+    static async updateTestPlanElements(updatedElements: ITestObject[]) {
+        return await axiosInstance.put<Boolean>(
+            BASE_API_URL + '/test-plan/elements',
+            updatedElements
         )
     }
 

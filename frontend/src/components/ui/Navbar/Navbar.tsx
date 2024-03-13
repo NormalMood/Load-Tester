@@ -1,4 +1,4 @@
-import { TEST_PAGE_PATH, TEST_RESULTS_PAGE_PATH } from '../../../@types/consts/consts';
+import { TEST_PAGE_PATH, TEST_RESULTS_PAGE_PATH } from '../../../@types/consts/pagesPaths';
 import Tab from '../Tab/Tab';
 import styles from './Navbar.module.css';
 import { useState } from 'react';

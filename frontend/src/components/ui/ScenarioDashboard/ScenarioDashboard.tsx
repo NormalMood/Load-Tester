@@ -6,6 +6,9 @@ import Button from '../Button/Button';
 import testScenarioStyles from '../../../styles/TestScenarios.module.css';
 import Popup from '../Popup/Popup';
 import { HTTP_SAMPLER } from '../../../@types/consts/testObjectTypes';
+import useUpdatedObjectsStore from '../../../store/useUpdatedObjectsStore';
+import { TestPlanService } from '../../../service/TestPlanService';
+import { getObjectsArrayFromMap } from '../../../utils/Utils';
 
 interface IScenarioDashboardProps {
     items?: ITestObject[] | null;
@@ -41,9 +44,24 @@ const ScenarioDashboard: FC<IScenarioDashboardProps> = ({items, addItemCallback,
         setDeleteImgVisibility(new Array(items?.length).fill({display: 'none'}))
     }, [items])
 
+    const guidToObject = useUpdatedObjectsStore(state => state.guidToObject)
+
+    const saveObjects = async () => {
+        if (guidToObject.size > 0)
+            await TestPlanService.updateTestPlanElements(getObjectsArrayFromMap(guidToObject))
+    }
 
     return (
         <div className={styles.scenarioDashboard}>
+            {items !== null &&
+                <div className={styles.saveImgContainer}>
+                    <img 
+                        src='./images/save.svg' 
+                        className={styles.saveImg} 
+                        onClick={() => saveObjects()}
+                    />
+                </div>
+            }
             <div className={styles.scenarioObjectsContainer}>
                 {items?.map((item, index) =>
                     <>

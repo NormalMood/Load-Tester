@@ -1,6 +1,7 @@
 .scenarioDashboard {
     display: grid;
     grid-template-columns: auto 50px;
+    grid-template-rows: 60px auto;
     background-color: #1D1F1F;
 }
 
@@ -9,7 +10,6 @@
     grid-template-columns: 70px auto;
     position: relative;
     grid-column: 1;
-    margin-top: 50px;
     height: fit-content;
     row-gap: 30px;
 }
@@ -62,4 +62,22 @@
     width: 25px;
     height: 25px;
     cursor: pointer;
+}
+
+.saveImgContainer {
+    display: flex;
+    grid-column: 1;
+    align-items: center;
+    justify-content: right;
+}
+
+.saveImg {
+    width: 25px;
+    height: 25px;
+    cursor: pointer;
+}
+
+.saveImg:active {
+    width: 23px;
+    height: 23px;
 }

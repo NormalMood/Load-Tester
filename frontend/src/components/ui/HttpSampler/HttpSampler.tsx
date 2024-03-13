@@ -5,6 +5,7 @@ import { useState } from 'react';
 import Tab from '../Tab/Tab';
 import Select from '../Select/Select';
 import Input from '../Input/Input';
+import useUpdatedObjectsStore from '../../../store/useUpdatedObjectsStore';
 
 interface IHttpSamplerProps {
     httpSampler: IHttpSampler;
@@ -18,11 +19,28 @@ const HttpSampler: FC<IHttpSamplerProps> = ({httpSampler}) => {
     const [method, setMethod] = useState(httpSampler.data?.method)
     const onSelectMethod = (e: React.ChangeEvent<HTMLSelectElement>) => {
         setMethod(e.target.value)
+        updateHttpSampler(e.target.value, URL as string, '')
     }
 
     const [URL, setURL] = useState(httpSampler.data?.domain)
     const onURLChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
         setURL(e.target.value)
+        updateHttpSampler(method as string, e.target.value, '')
+    }
+
+    const setHTTPSampler = useUpdatedObjectsStore(state => state.setObject)
+
+    const updateHttpSampler = (method : string, domain: string, name: string) => {
+        const updatedHTTPSampler: IHttpSampler = {
+            parentGuid: httpSampler.parentGuid as string,
+            guid: httpSampler.guid as string,
+            data: {
+                method,
+                domain,
+                name
+            }
+        }
+        setHTTPSampler(httpSampler.guid, updatedHTTPSampler)
     }
 
     return (
