@@ -15,8 +15,14 @@ public class HttpSamplerMapper implements Function<Document, Object> {
 	public Object apply(Document httpSamplerDocument) {
 		HTTPSamplerProxy httpSampler = new HTTPSamplerProxy();
 		Document httpSamplerDataDocument = httpSamplerDocument.get(JsonFieldModel.DATA, Document.class);
-		httpSampler.setDomain(httpSamplerDataDocument.getString(JsonFieldModel.DOMAIN));
-        httpSampler.setMethod(httpSamplerDataDocument.getString(JsonFieldModel.METHOD));
+		httpSampler.setName(httpSamplerDataDocument.get(JsonFieldModel.NAME, ""));
+		httpSampler.setMethod(httpSamplerDataDocument.get(JsonFieldModel.METHOD, ""));
+		httpSampler.setDomain(httpSamplerDataDocument.get(JsonFieldModel.DOMAIN, ""));
+		httpSampler.setPath(httpSamplerDataDocument.get(JsonFieldModel.PATH, ""));
+		httpSampler.setPort(httpSamplerDataDocument.getInteger(JsonFieldModel.PORT, 80));
+		
+		
+		
         httpSampler.setProperty(TestElement.TEST_CLASS, HTTPSamplerProxy.class.getName());
         httpSampler.setProperty(TestElement.GUI_CLASS, HttpTestSampleGui.class.getName());
 		return httpSampler;

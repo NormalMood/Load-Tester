@@ -24,6 +24,7 @@ public class ThreadGroupMapper implements Function<Document, Object> {
         loopController.initialize();
         
         ThreadGroup threadGroup = new ThreadGroup();
+        threadGroup.setName(threadGroupDataDocument.get(JsonFieldModel.NAME, ""));
         threadGroup.setNumThreads(threadGroupDataDocument.getInteger(JsonFieldModel.THREADS, 1));
         threadGroup.setRampUp(threadGroupDataDocument.getInteger(JsonFieldModel.RAMP_UP, 1));
         threadGroup.setSamplerController(loopController);
