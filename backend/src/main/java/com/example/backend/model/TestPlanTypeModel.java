@@ -8,4 +8,6 @@ public class TestPlanTypeModel {
 	
 	public static final String HTTP_SAMPLER = "httpSampler";
 	
+	public static final String HEADER_MANAGER = "headerManager";
+	
 }

@@ -35,5 +35,9 @@ public class JsonFieldModel {
 	public static final String PARAM_KEYS = "paramKeys";
 	
 	public static final String PARAM_VALUES = "paramValues";
+	
+	public static final String HEADER_KEYS = "headerKeys";
+	
+	public static final String HEADER_VALUES = "headerValues";
 
 }

@@ -159,6 +159,17 @@ public class TestPlanService implements LTTestPlan {
 				testPlanDAO.findChildrenByParentGuid(testPlanGuid.get(JsonFieldModel.GUID)), 
 				parentHashTreeQueue
 			);
+		/*try {
+			org.apache.jmeter.save.SaveService.saveTree(TestPlanModel.testPlanTree, new java.io.FileOutputStream("C:/Users/User/Desktop/myexample.jmx"));
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}*/
+		
+		System.out.println(TestPlanModel.testPlanTree);
 		runTest();
 		clearTestPlanHashTree();
 		return getTestResult();
@@ -180,15 +191,53 @@ public class TestPlanService implements LTTestPlan {
 	private void addTestPlanElementInHashTree(List<Document> children, Deque<HashTree> parentHashTreeQueue) {
 		HashTree parentHashTree = parentHashTreeQueue.pollFirst();
 		for (Document child: children) {
-			parentHashTreeQueue
-				.addLast(
-						parentHashTree
-							.add(
+			if (child.getString(JsonFieldModel.TYPE).equals(TestPlanTypeModel.HTTP_SAMPLER)) {
+				Document headerManagerDocument = new Document();
+				List<String> headerKeys = child
+											.get(JsonFieldModel.DATA, Document.class)
+											.getList(JsonFieldModel.HEADER_KEYS, String.class);
+				List<String> headerValues = child
+											.get(JsonFieldModel.DATA, Document.class)
+											.getList(JsonFieldModel.HEADER_VALUES, String.class);
+				if (headerKeys != null && headerKeys.size() > 0 && headerKeys.size() == headerValues.size()) {
+					headerManagerDocument.put(JsonFieldModel.TYPE, TestPlanTypeModel.HEADER_MANAGER);
+					headerManagerDocument.put(JsonFieldModel.HEADER_KEYS, headerKeys);
+					headerManagerDocument.put(JsonFieldModel.HEADER_VALUES, headerValues);
+				}
+				if (!headerManagerDocument.isEmpty()) {
+					HashTree httpSamplerHeaderManagerHashTree = new HashTree();
+					httpSamplerHeaderManagerHashTree
+						.add(
+							TestPlanMapModel.TYPE_JMETER_OBJECT
+								.get(child.get(JsonFieldModel.TYPE, String.class))
+								.apply(child), 
+							TestPlanMapModel.TYPE_JMETER_OBJECT
+								.get(headerManagerDocument.get(JsonFieldModel.TYPE, String.class))
+								.apply(headerManagerDocument)
+						);
+					parentHashTree.add(httpSamplerHeaderManagerHashTree);
+				}
+				else
+					parentHashTreeQueue
+						.addLast(
+							parentHashTree
+								.add(
 									TestPlanMapModel.TYPE_JMETER_OBJECT
-										.get(child.get(JsonFieldModel.TYPE, String.class))
-										.apply(child)
+									.get(child.get(JsonFieldModel.TYPE, String.class))
+									.apply(child)
 								)
-					);
+						);
+			}
+			else
+				parentHashTreeQueue
+					.addLast(
+							parentHashTree
+								.add(
+										TestPlanMapModel.TYPE_JMETER_OBJECT
+											.get(child.get(JsonFieldModel.TYPE, String.class))
+											.apply(child)
+									)
+						);
 			addTestPlanElementInHashTree(
 					testPlanDAO
 						.findChildrenByParentGuid(child.get(JsonFieldModel.GUID, String.class)), 
