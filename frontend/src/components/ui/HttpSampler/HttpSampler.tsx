@@ -5,7 +5,7 @@ import { useState } from 'react';
 import Tab from '../Tab/Tab';
 import Select from '../Select/Select';
 import Input from '../Input/Input';
-import useUpdatedObjectsStore from '../../../store/useUpdatedObjectsStore';
+import useUpdatedHttpSamplersStore from '../../../store/useUpdatedHttpSamplersStore';
 
 interface IHttpSamplerProps {
     httpSampler: IHttpSampler;
@@ -28,7 +28,7 @@ const HttpSampler: FC<IHttpSamplerProps> = ({httpSampler}) => {
         updateHttpSampler(method as string, e.target.value, '')
     }
 
-    const setHTTPSampler = useUpdatedObjectsStore(state => state.setObject)
+    const setHTTPSampler = useUpdatedHttpSamplersStore(state => state.setHttpSampler)
 
     const updateHttpSampler = (method : string, domain: string, name: string) => {
         const updatedHTTPSampler: IHttpSampler = {

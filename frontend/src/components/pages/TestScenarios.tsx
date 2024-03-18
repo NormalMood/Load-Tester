@@ -31,16 +31,17 @@ const TestScenarios = () => {
             )
     }, [testPlan])
 
-    const [selectedThreadGroupGuid, setSelectedThreadGroupGuid] = useState<string | null>(null)
+    //const [selectedThreadGroupGuid, setSelectedThreadGroupGuid] = useState<string | null>(null)
+    const [selectedThreadGroup, setSelectedThreadGroup] = useState<IThreadGroup | null>(null)
 
     useEffect(() => {
-        if (selectedThreadGroupGuid !== null)
-            TestPlanService.getChildrenByParentGuid(selectedThreadGroupGuid).then(response => 
+        if (selectedThreadGroup?.guid !== null && selectedThreadGroup?.guid !== undefined)
+            TestPlanService.getChildrenByParentGuid(selectedThreadGroup?.guid).then(response => 
                 setScenarioDashboardItems(response)
             )
         else
             setScenarioDashboardItems(null)
-    }, [selectedThreadGroupGuid])
+    }, [selectedThreadGroup])
 
     const [scenarioDashboardItems, setScenarioDashboardItems] = useState<ITestObject[] | null>(null)
 
@@ -50,7 +51,10 @@ const TestScenarios = () => {
             child: {
                 type: THREAD_GROUP,
                 data: {
-                    name: NEW_THREAD_GROUP_NAME
+                    name: NEW_THREAD_GROUP_NAME,
+                    threads: 1,
+                    rampUp: 1,
+                    loops: 1
                 }
             }
         }).then(response => {
@@ -66,8 +70,8 @@ const TestScenarios = () => {
             await TestPlanService.deleteTestPlanElement(testPlan.guid, guid).then(response => {
                 if (response.status === OK_RESPONSE_CODE && response.data) {
                     setThreadGroups(threadGroups.filter(threadGroup => threadGroup.guid !== guid))
-                    if (selectedThreadGroupGuid === guid)
-                        setSelectedThreadGroupGuid(null)
+                    if (selectedThreadGroup?.guid === guid)
+                        setSelectedThreadGroup(null)
                 }
             })
     }
@@ -75,7 +79,7 @@ const TestScenarios = () => {
     const addItem = async (objectType: string) => {
         if (objectType === HTTP_SAMPLER) {
             const newHttpSampler: INewHttpSampler = {
-                parentGuid: selectedThreadGroupGuid as string,
+                parentGuid: selectedThreadGroup?.guid as string,
                 child: {
                     type: HTTP_SAMPLER,
                     data: {
@@ -87,7 +91,7 @@ const TestScenarios = () => {
             await TestPlanService.addTestPlanElement(newHttpSampler)
                 .then(response => {
                     if (response.status === OK_RESPONSE_CODE) {
-                        response.data.parentGuid = selectedThreadGroupGuid as string
+                        response.data.parentGuid = selectedThreadGroup?.guid as string
                         if (scenarioDashboardItems === null)
                             setScenarioDashboardItems([response.data])
                         else
@@ -98,13 +102,24 @@ const TestScenarios = () => {
     }
 
     const deleteItem = async (guid: string) => {
-        if (selectedThreadGroupGuid !== null)
-            await TestPlanService.deleteTestPlanElement(selectedThreadGroupGuid, guid)
+        if (selectedThreadGroup?.guid !== null && selectedThreadGroup?.guid !== undefined)
+            await TestPlanService.deleteTestPlanElement(selectedThreadGroup?.guid, guid)
                 .then(response => {
                     if (response.status === OK_RESPONSE_CODE)
                         if (scenarioDashboardItems)
                             setScenarioDashboardItems(scenarioDashboardItems?.filter(item => item.guid !== guid))
                 })
+    }
+
+    const changeThreadGroupNameOnUpdate = (guid: string, name: string) => {
+        const updatedThreadGroups = [...threadGroups]
+        for (let i = 0; i < updatedThreadGroups.length; i++) {
+            if (updatedThreadGroups[i].guid === guid) {
+                updatedThreadGroups[i].data!.name = name
+                i = updatedThreadGroups.length
+            }
+        }
+        setThreadGroups(updatedThreadGroups)
     }
 
     return (
@@ -118,7 +133,7 @@ const TestScenarios = () => {
                                 <>
                                     <ThreadGroupHeader 
                                         text={threadGroup?.data?.name} 
-                                        mix={selectedThreadGroupGuid === threadGroup.guid && styles.threadGroupTabHeaderActive} 
+                                        mix={selectedThreadGroup?.guid === threadGroup.guid && styles.threadGroupTabHeaderActive} 
                                     />
                                     <img 
                                         className={styles.threadGroupDeleteImg} 
@@ -128,13 +143,13 @@ const TestScenarios = () => {
                                 </>
                             } 
                             mix={
-                                selectedThreadGroupGuid === threadGroup.guid 
+                                selectedThreadGroup?.guid === threadGroup.guid 
                                 ? 
                                     [styles.threadGroupTab, styles.threadGroupTabActive].join(' ') 
                                 : 
                                     styles.threadGroupTab
                                 } 
-                            onClick={() => setSelectedThreadGroupGuid(threadGroup.guid)}
+                            onClick={() => setSelectedThreadGroup(threadGroup)}
                         />)}
                     <Button 
                         children={<span><img src='./images/plus.svg' className={styles.accentButtonImg} />&nbsp;Сценарий</span>}  
@@ -146,6 +161,8 @@ const TestScenarios = () => {
             <ScenarioDashboard 
                 addItemCallback={addItem} 
                 deleteItemCallback={deleteItem}
+                selectedThreadGroup={selectedThreadGroup}
+                changeThreadGroupNameOnUpdateCallback={changeThreadGroupNameOnUpdate}
                 items={scenarioDashboardItems} 
             />
         </div>
