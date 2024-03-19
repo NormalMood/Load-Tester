@@ -1,11 +1,12 @@
 import { IHttpSampler } from '../../../@types/interfaces/IHttpSampler';
-import { FC, useEffect } from 'react';
+import { FC } from 'react';
 import styles from './HttpSampler.module.css';
 import { useState } from 'react';
 import Tab from '../Tab/Tab';
 import Select from '../Select/Select';
 import Input from '../Input/Input';
 import useUpdatedHttpSamplersStore from '../../../store/useUpdatedHttpSamplersStore';
+import Textarea from '../Textarea/Textarea';
 
 interface IHttpSamplerProps {
     httpSampler: IHttpSampler;
@@ -15,6 +16,7 @@ const NAME_INPUT_PLACEHOLDER = 'Название'
 const DOMAIN_INPUT_PLACEHOLDER = 'Домен'
 const PATH_INPUT_PLACEHOLDER = 'Путь'
 const PORT_INPUT_PLACEHOLDER = 'Порт'
+const BODY_JSON_TEXTAREA_PLACEHOLDER = '{ "key": "value" }'
 
 const HttpSampler: FC<IHttpSamplerProps> = ({httpSampler}) => {
     const [isBodyShown, setIsBodyShown] = useState(false)
@@ -24,31 +26,37 @@ const HttpSampler: FC<IHttpSamplerProps> = ({httpSampler}) => {
     const [name, setName] = useState(httpSampler.data?.name)
     const onNameChangedHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
         setName(e.target.value)
-        updateHttpSampler(e.target.value, method, domain, path, port)
+        updateHttpSampler(e.target.value, method, domain, path, port, bodyJson)
     }
 
     const [method, setMethod] = useState(httpSampler.data?.method)
     const onSelectMethod = (e: React.ChangeEvent<HTMLSelectElement>) => {
         setMethod(e.target.value)
-        updateHttpSampler(name, e.target.value, domain, path, port)
+        updateHttpSampler(name, e.target.value, domain, path, port, bodyJson)
     }
 
     const [domain, setDomain] = useState(httpSampler.data?.domain)
     const onDomainChangedHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
         setDomain(e.target.value)
-        updateHttpSampler(name, method, e.target.value, path, port)
+        updateHttpSampler(name, method, e.target.value, path, port, bodyJson)
     }
 
     const [path, setPath] = useState(httpSampler.data?.path)
     const onPathChangedHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
         setPath(e.target.value)
-        updateHttpSampler(name, method, domain, e.target.value, port)
+        updateHttpSampler(name, method, domain, e.target.value, port, bodyJson)
     }
 
     const [port, setPort] = useState(httpSampler.data?.port)
     const onPortChangedHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
         setPort(e.target.value as any as number)
-        updateHttpSampler(name, method, domain, path, e.target.value as any as number)
+        updateHttpSampler(name, method, domain, path, e.target.value as any as number, bodyJson)
+    }
+
+    const [bodyJson, setBodyJson] = useState(httpSampler.data?.bodyJson)
+    const onBodyJsonChangedHandler = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+        setBodyJson(e.target.value)
+        updateHttpSampler(name, method, domain, path, port, e.target.value)
     }
 
     const setHTTPSampler = useUpdatedHttpSamplersStore(state => state.setHttpSampler)
@@ -58,7 +66,8 @@ const HttpSampler: FC<IHttpSamplerProps> = ({httpSampler}) => {
         method : string | undefined, 
         domain: string | undefined,
         path: string | undefined,
-        port: number | undefined
+        port: number | undefined,
+        bodyJson: string | undefined
     ) => {
         const updatedHTTPSampler: IHttpSampler = {
             parentGuid: httpSampler.parentGuid as string,
@@ -68,11 +77,15 @@ const HttpSampler: FC<IHttpSamplerProps> = ({httpSampler}) => {
                 method,
                 domain,
                 path,
-                port
+                port,
+                bodyJson
             }
         }
         setHTTPSampler(httpSampler.guid, updatedHTTPSampler)
     }
+
+
+    const [selectedSubTabIndex, setSelectedSubTabIndex] = useState(0)
 
     return (
         <div className={styles.httpSampler}>
@@ -153,6 +166,30 @@ const HttpSampler: FC<IHttpSamplerProps> = ({httpSampler}) => {
                                         />
                                     </div>
                                 </div>
+                                <div className={styles.tabsContainer}>
+                                    <Tab 
+                                        children={
+                                            <span>Параметры</span>
+                                        } 
+                                        mix={selectedSubTabIndex === 0 && styles.tabSelected}
+                                        onClick={() => setSelectedSubTabIndex(0)}
+                                    />
+                                    <Tab 
+                                        children={
+                                            <span>JSON</span>
+                                        } 
+                                        mix={selectedSubTabIndex === 1 && styles.tabSelected}
+                                        onClick={() => setSelectedSubTabIndex(1)}
+                                    />
+                                </div>
+                                {selectedSubTabIndex === 1 &&
+                                    <Textarea 
+                                        value={bodyJson} 
+                                        onChange={onBodyJsonChangedHandler} 
+                                        placeholder={BODY_JSON_TEXTAREA_PLACEHOLDER}
+                                        mix={styles.httpSamplerJsonTextarea} 
+                                    />
+                                }
                             </div>
                         }
                         {selectedTabIndex === 1 &&

@@ -10,6 +10,7 @@ export interface INewHttpSampler extends INewTestObject {
             domain?: string;
             path?: string;
             port?: number;
+            bodyJson?: string;
         }
     }
 }

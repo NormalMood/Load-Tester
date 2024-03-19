@@ -70,6 +70,8 @@
     display: grid;
     row-gap: 10px;
     grid-template-rows: repeat(2, min-content);
+    border-bottom: #1D1F1F 1px solid;
+    padding-bottom: 10px;
 }
 
 .httpSamplerSelect {
@@ -85,4 +87,8 @@
 
 .httpSamplerPort {
     width: 90px;
+}
+
+.httpSamplerJsonTextarea {
+    min-height: 100px;
 }

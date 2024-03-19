@@ -1,6 +1,7 @@
 .select {
     background-color: #EDECEC;
     color: #6D6E6E;
+    cursor: pointer;
 }
 
 .select > option {

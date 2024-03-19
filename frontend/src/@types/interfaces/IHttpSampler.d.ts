@@ -7,5 +7,6 @@ export interface IHttpSampler extends ITestObject {
         domain?: string;
         path?: string;
         port?: number;
+        bodyJson?: string;
     }
 }
