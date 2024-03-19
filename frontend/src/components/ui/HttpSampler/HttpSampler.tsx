@@ -28,37 +28,37 @@ const HttpSampler: FC<IHttpSamplerProps> = ({httpSampler}) => {
     const [name, setName] = useState(httpSampler.data?.name)
     const onNameChangedHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
         setName(e.target.value)
-        updateHttpSampler(e.target.value, method, domain, path, port, bodyJson, headerKeys, headerValues)
+        updateHttpSampler(e.target.value, method, domain, path, port, bodyJson, headerKeys, headerValues, paramKeys, paramValues)
     }
 
     const [method, setMethod] = useState(httpSampler.data?.method)
     const onSelectMethod = (e: React.ChangeEvent<HTMLSelectElement>) => {
         setMethod(e.target.value)
-        updateHttpSampler(name, e.target.value, domain, path, port, bodyJson, headerKeys, headerValues)
+        updateHttpSampler(name, e.target.value, domain, path, port, bodyJson, headerKeys, headerValues, paramKeys, paramValues)
     }
 
     const [domain, setDomain] = useState(httpSampler.data?.domain)
     const onDomainChangedHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
         setDomain(e.target.value)
-        updateHttpSampler(name, method, e.target.value, path, port, bodyJson, headerKeys, headerValues)
+        updateHttpSampler(name, method, e.target.value, path, port, bodyJson, headerKeys, headerValues, paramKeys, paramValues)
     }
 
     const [path, setPath] = useState(httpSampler.data?.path)
     const onPathChangedHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
         setPath(e.target.value)
-        updateHttpSampler(name, method, domain, e.target.value, port, bodyJson, headerKeys, headerValues)
+        updateHttpSampler(name, method, domain, e.target.value, port, bodyJson, headerKeys, headerValues, paramKeys, paramValues)
     }
 
     const [port, setPort] = useState(httpSampler.data?.port)
     const onPortChangedHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
         setPort(e.target.value as any as number)
-        updateHttpSampler(name, method, domain, path, e.target.value as any as number, bodyJson, headerKeys, headerValues)
+        updateHttpSampler(name, method, domain, path, e.target.value as any as number, bodyJson, headerKeys, headerValues, paramKeys, paramValues)
     }
 
     const [bodyJson, setBodyJson] = useState(httpSampler.data?.bodyJson)
     const onBodyJsonChangedHandler = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         setBodyJson(e.target.value)
-        updateHttpSampler(name, method, domain, path, port, e.target.value, headerKeys, headerValues)
+        updateHttpSampler(name, method, domain, path, port, e.target.value, headerKeys, headerValues, paramKeys, paramValues)
     }
 
     const [headerKeys, setHeaderKeys] = useState(httpSampler.data?.headerKeys)
@@ -78,7 +78,7 @@ const HttpSampler: FC<IHttpSamplerProps> = ({httpSampler}) => {
             const headerKeysUpdated = [...headerKeys]
             headerKeysUpdated[index] = headerKey
             setHeaderKeys(headerKeysUpdated)
-            updateHttpSampler(name, method, domain, path, port, bodyJson, headerKeysUpdated, headerValues)
+            updateHttpSampler(name, method, domain, path, port, bodyJson, headerKeysUpdated, headerValues, paramKeys, paramValues)
 
         }
     }
@@ -87,7 +87,38 @@ const HttpSampler: FC<IHttpSamplerProps> = ({httpSampler}) => {
             const headerValuesUpdated = [...headerValues]
             headerValuesUpdated[index] = headerValue
             setHeaderValues(headerValuesUpdated)
-            updateHttpSampler(name, method, domain, path, port, bodyJson, headerKeys, headerValuesUpdated)
+            updateHttpSampler(name, method, domain, path, port, bodyJson, headerKeys, headerValuesUpdated, paramKeys, paramValues)
+        }
+    }
+
+
+    const [paramKeys, setParamKeys] = useState(httpSampler.data?.paramKeys)
+    const [paramValues, setParamValues] = useState(httpSampler.data?.paramValues)
+    const addParameter = () => {
+        if (paramKeys === undefined && paramValues === undefined) {
+            setParamKeys([''])
+            setParamValues([''])
+        }
+        else {
+            setParamKeys([...(paramKeys as string[]), ''])
+            setParamValues([...(paramValues as string[]), ''])
+        }
+    }
+    const onParamKeysChangedHandler = (paramKey: string, index: number) => {
+        if (paramKeys !== undefined) {
+            const paramKeysUpdated = [...paramKeys]
+            paramKeysUpdated[index] = paramKey
+            setParamKeys(paramKeysUpdated)
+            updateHttpSampler(name, method, domain, path, port, bodyJson, headerKeys, headerValues, paramKeysUpdated, paramValues)
+
+        }
+    }
+    const onParamValuesChangedHandler = (paramValue: string, index: number) => {
+        if (paramValues !== undefined) {
+            const paramValuesUpdated = [...paramValues]
+            paramValuesUpdated[index] = paramValue
+            setParamValues(paramValuesUpdated)
+            updateHttpSampler(name, method, domain, path, port, bodyJson, headerKeys, headerValues, paramKeys, paramValuesUpdated)
         }
     }
 
@@ -102,7 +133,9 @@ const HttpSampler: FC<IHttpSamplerProps> = ({httpSampler}) => {
         port: number | undefined,
         bodyJson: string | undefined,
         headerKeys: string[] | undefined,
-        headerValues: string[] | undefined
+        headerValues: string[] | undefined,
+        paramKeys: string[] | undefined,
+        paramValues: string[] | undefined
     ) => {
         const updatedHTTPSampler: IHttpSampler = {
             parentGuid: httpSampler.parentGuid as string,
@@ -115,7 +148,9 @@ const HttpSampler: FC<IHttpSamplerProps> = ({httpSampler}) => {
                 port,
                 bodyJson,
                 headerKeys,
-                headerValues
+                headerValues,
+                paramKeys,
+                paramValues
             }
         }
         setHTTPSampler(httpSampler.guid, updatedHTTPSampler)
@@ -249,6 +284,39 @@ const HttpSampler: FC<IHttpSamplerProps> = ({httpSampler}) => {
                                         onClick={() => setSelectedSubTabIndex(1)}
                                     />
                                 </div>
+                                {selectedSubTabIndex === 0 &&
+                                    <>
+                                        <div className={styles.paramsContainer}>
+                                            {paramKeys?.map((paramKey, index) => 
+                                                <>
+                                                    <Input 
+                                                        value={paramKey} 
+                                                        onChange={(e) => onParamKeysChangedHandler(e.target.value, index)} 
+                                                        mix={styles.paramKeyInput}
+                                                    />
+                                                    <Input 
+                                                        value={(paramValues as string[]).at(index)} 
+                                                        onChange={(e) => onParamValuesChangedHandler(e.target.value, index)} 
+                                                        mix={styles.paramValueInput} 
+                                                    />
+                                                </>
+                                            )}
+                                        </div>
+                                        <Button 
+                                            children={
+                                                <span>
+                                                    <img 
+                                                        src='./images/plus.svg' 
+                                                        className={testScenarioStyles.accentButtonImg} 
+                                                    />
+                                                    &nbsp;Добавить
+                                                </span>
+                                            }  
+                                            mix={[testScenarioStyles.accentButton, styles.newHeaderButton].join(' ')}
+                                            onClick={() => addParameter()}
+                                        />
+                                    </>
+                                }
                                 {selectedSubTabIndex === 1 &&
                                     <Textarea 
                                         value={bodyJson} 
