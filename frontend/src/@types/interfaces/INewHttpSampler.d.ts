@@ -5,9 +5,11 @@ export interface INewHttpSampler extends INewTestObject {
     child: {
         type: string;
         data?: {
+            name?: string;
             method?: string;
             domain?: string;
-            name?: string;
+            path?: string;
+            port?: number;
         }
     }
 }

@@ -99,7 +99,6 @@ const ScenarioDashboard: FC<IScenarioDashboardProps> = ({selectedThreadGroup, it
 
     const onThreadGroupNameChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
         setThreadGroupName(e.target.value)
-        console.log('sd')
         updateThreadGroup(e.target.value, threads, rampUp, loops)
     }
 

@@ -1,5 +1,5 @@
 import { IHttpSampler } from '../../../@types/interfaces/IHttpSampler';
-import { FC } from 'react';
+import { FC, useEffect } from 'react';
 import styles from './HttpSampler.module.css';
 import { useState } from 'react';
 import Tab from '../Tab/Tab';
@@ -11,33 +11,64 @@ interface IHttpSamplerProps {
     httpSampler: IHttpSampler;
 }
 
+const NAME_INPUT_PLACEHOLDER = 'Название'
+const DOMAIN_INPUT_PLACEHOLDER = 'Домен'
+const PATH_INPUT_PLACEHOLDER = 'Путь'
+const PORT_INPUT_PLACEHOLDER = 'Порт'
+
 const HttpSampler: FC<IHttpSamplerProps> = ({httpSampler}) => {
     const [isBodyShown, setIsBodyShown] = useState(false)
     const [selectedTabIndex, setSelectedTabIndex] = useState(0)
     const selectOptions = ['GET', 'POST', 'PUT', 'DELETE']
 
+    const [name, setName] = useState(httpSampler.data?.name)
+    const onNameChangedHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setName(e.target.value)
+        updateHttpSampler(e.target.value, method, domain, path, port)
+    }
+
     const [method, setMethod] = useState(httpSampler.data?.method)
     const onSelectMethod = (e: React.ChangeEvent<HTMLSelectElement>) => {
         setMethod(e.target.value)
-        updateHttpSampler(e.target.value, URL as string, '')
+        updateHttpSampler(name, e.target.value, domain, path, port)
     }
 
-    const [URL, setURL] = useState(httpSampler.data?.domain)
-    const onURLChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setURL(e.target.value)
-        updateHttpSampler(method as string, e.target.value, '')
+    const [domain, setDomain] = useState(httpSampler.data?.domain)
+    const onDomainChangedHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setDomain(e.target.value)
+        updateHttpSampler(name, method, e.target.value, path, port)
+    }
+
+    const [path, setPath] = useState(httpSampler.data?.path)
+    const onPathChangedHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setPath(e.target.value)
+        updateHttpSampler(name, method, domain, e.target.value, port)
+    }
+
+    const [port, setPort] = useState(httpSampler.data?.port)
+    const onPortChangedHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setPort(e.target.value as any as number)
+        updateHttpSampler(name, method, domain, path, e.target.value as any as number)
     }
 
     const setHTTPSampler = useUpdatedHttpSamplersStore(state => state.setHttpSampler)
 
-    const updateHttpSampler = (method : string, domain: string, name: string) => {
+    const updateHttpSampler = (
+        name: string | undefined, 
+        method : string | undefined, 
+        domain: string | undefined,
+        path: string | undefined,
+        port: number | undefined
+    ) => {
         const updatedHTTPSampler: IHttpSampler = {
             parentGuid: httpSampler.parentGuid as string,
             guid: httpSampler.guid as string,
             data: {
+                name,
                 method,
                 domain,
-                name
+                path,
+                port
             }
         }
         setHTTPSampler(httpSampler.guid, updatedHTTPSampler)
@@ -54,12 +85,12 @@ const HttpSampler: FC<IHttpSamplerProps> = ({httpSampler}) => {
                     />
                 </div>
                 <div className={styles.httpSamplerHeaderContentContainer}>
-                    <span>{httpSampler.data?.name}</span>
+                    <span>{name}</span>
                     <span><b>{method}</b>&nbsp;/</span>
                 </div>
             </div>
             <div className={isBodyShown ? styles.httpSamplerBody : styles.httpSamplerBodyHidden}>
-                <div className={styles.tabsContainer}>
+                {/* <div className={styles.tabsContainer}>
                     <Tab 
                         children={
                             <span>Запрос</span>
@@ -81,19 +112,46 @@ const HttpSampler: FC<IHttpSamplerProps> = ({httpSampler}) => {
                         mix={selectedTabIndex === 2 && styles.tabSelected}
                         onClick={() => setSelectedTabIndex(2)}
                     />
-                </div>
+                </div> */}
                 <div className={styles.tabBody}>
                     <div className={styles.tabContent}>
                         {selectedTabIndex === 0 &&
                             <div className={styles.requestTabContent}>
+                                <Input 
+                                    value={name} 
+                                    onChange={onNameChangedHandler}
+                                    placeholder={NAME_INPUT_PLACEHOLDER}
+                                    title={NAME_INPUT_PLACEHOLDER}
+                                />
                                 <b>Адрес</b>
                                 <div className={styles.methodURLContainer}>
                                     <Select
                                         selectedOption={httpSampler.data?.method}
                                         options={selectOptions} 
                                         onChange={onSelectMethod}
+                                        mix={styles.httpSamplerSelect}
                                     />
-                                    <Input value={URL} onChange={onURLChangeHandler} placeholder={'URL'} />
+                                    <div className={styles.URLContainer}>
+                                        <Input 
+                                            value={domain} 
+                                            onChange={onDomainChangedHandler} 
+                                            placeholder={DOMAIN_INPUT_PLACEHOLDER} 
+                                            title={DOMAIN_INPUT_PLACEHOLDER} 
+                                        />
+                                        <Input 
+                                            value={port}
+                                            onChange={onPortChangedHandler}
+                                            placeholder={PORT_INPUT_PLACEHOLDER}
+                                            title={PORT_INPUT_PLACEHOLDER}
+                                            mix={styles.httpSamplerPort}
+                                        />
+                                        <Input
+                                            value={path}
+                                            onChange={onPathChangedHandler}
+                                            placeholder={PATH_INPUT_PLACEHOLDER}
+                                            title={PATH_INPUT_PLACEHOLDER}
+                                        />
+                                    </div>
                                 </div>
                             </div>
                         }

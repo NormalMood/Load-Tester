@@ -62,12 +62,27 @@
 
 .requestTabContent {
     display: grid;
-    width: fit-content;
+    width: 350px;
     row-gap: 10px;
 }
 
 .methodURLContainer {
     display: grid;
+    row-gap: 10px;
+    grid-template-rows: repeat(2, min-content);
+}
+
+.httpSamplerSelect {
+    width: 90px;
+}
+
+.URLContainer {
+    display: grid;
     column-gap: 10px;
-    grid-template-columns: repeat(2, min-content);
+    grid-template-columns: repeat(3, auto);
+
+}
+
+.httpSamplerPort {
+    width: 90px;
 }
