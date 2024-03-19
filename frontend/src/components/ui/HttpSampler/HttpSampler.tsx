@@ -1,5 +1,5 @@
 import { IHttpSampler } from '../../../@types/interfaces/IHttpSampler';
-import { FC } from 'react';
+import { FC, useEffect } from 'react';
 import styles from './HttpSampler.module.css';
 import { useState } from 'react';
 import Tab from '../Tab/Tab';
@@ -25,44 +25,57 @@ const HttpSampler: FC<IHttpSamplerProps> = ({httpSampler}) => {
     const [selectedTabIndex, setSelectedTabIndex] = useState(0)
     const selectOptions = ['GET', 'POST', 'PUT', 'DELETE']
 
-    const [name, setName] = useState(httpSampler.data?.name)
+    useEffect(() => {
+        setName(httpSampler.data?.name)
+        setMethod(httpSampler.data?.method)
+        setDomain(httpSampler.data?.domain)
+        setPath(httpSampler.data?.path)
+        setPort(httpSampler.data?.port)
+        setBodyJson(httpSampler.data?.bodyJson)
+        setHeaderKeys(httpSampler.data?.headerKeys)
+        setHeaderValues(httpSampler.data?.headerValues)
+        setParamKeys(httpSampler.data?.paramKeys)
+        setParamValues(httpSampler.data?.paramValues)
+    }, [httpSampler])
+
+    const [name, setName] = useState<string | undefined>()
     const onNameChangedHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
         setName(e.target.value)
         updateHttpSampler(e.target.value, method, domain, path, port, bodyJson, headerKeys, headerValues, paramKeys, paramValues)
     }
 
-    const [method, setMethod] = useState(httpSampler.data?.method)
+    const [method, setMethod] = useState<string | undefined>()
     const onSelectMethod = (e: React.ChangeEvent<HTMLSelectElement>) => {
         setMethod(e.target.value)
         updateHttpSampler(name, e.target.value, domain, path, port, bodyJson, headerKeys, headerValues, paramKeys, paramValues)
     }
 
-    const [domain, setDomain] = useState(httpSampler.data?.domain)
+    const [domain, setDomain] = useState<string | undefined>()
     const onDomainChangedHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
         setDomain(e.target.value)
         updateHttpSampler(name, method, e.target.value, path, port, bodyJson, headerKeys, headerValues, paramKeys, paramValues)
     }
 
-    const [path, setPath] = useState(httpSampler.data?.path)
+    const [path, setPath] = useState<string | undefined>()
     const onPathChangedHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
         setPath(e.target.value)
         updateHttpSampler(name, method, domain, e.target.value, port, bodyJson, headerKeys, headerValues, paramKeys, paramValues)
     }
 
-    const [port, setPort] = useState(httpSampler.data?.port)
+    const [port, setPort] = useState<number | undefined>()
     const onPortChangedHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
         setPort(e.target.value as any as number)
         updateHttpSampler(name, method, domain, path, e.target.value as any as number, bodyJson, headerKeys, headerValues, paramKeys, paramValues)
     }
 
-    const [bodyJson, setBodyJson] = useState(httpSampler.data?.bodyJson)
+    const [bodyJson, setBodyJson] = useState<string | undefined>()
     const onBodyJsonChangedHandler = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         setBodyJson(e.target.value)
         updateHttpSampler(name, method, domain, path, port, e.target.value, headerKeys, headerValues, paramKeys, paramValues)
     }
 
-    const [headerKeys, setHeaderKeys] = useState(httpSampler.data?.headerKeys)
-    const [headerValues, setHeaderValues] = useState(httpSampler.data?.headerValues)
+    const [headerKeys, setHeaderKeys] = useState<string[] | undefined>()
+    const [headerValues, setHeaderValues] = useState<string[] | undefined>()
     const addHeader = () => {
         if (headerKeys === undefined && headerValues === undefined) {
             setHeaderKeys([''])
@@ -92,8 +105,8 @@ const HttpSampler: FC<IHttpSamplerProps> = ({httpSampler}) => {
     }
 
 
-    const [paramKeys, setParamKeys] = useState(httpSampler.data?.paramKeys)
-    const [paramValues, setParamValues] = useState(httpSampler.data?.paramValues)
+    const [paramKeys, setParamKeys] = useState<string[] | undefined>()
+    const [paramValues, setParamValues] = useState<string[] | undefined>()
     const addParameter = () => {
         if (paramKeys === undefined && paramValues === undefined) {
             setParamKeys([''])
@@ -145,7 +158,7 @@ const HttpSampler: FC<IHttpSamplerProps> = ({httpSampler}) => {
                 method,
                 domain,
                 path,
-                port,
+                port: Number(port),
                 bodyJson,
                 headerKeys,
                 headerValues,

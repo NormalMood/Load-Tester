@@ -4,9 +4,25 @@
     justify-content: center;
     height: 60px;
     cursor: pointer;
+    position: relative;
 }
 
 .testPlanHeaderText {
     font-weight: bold;
     font-size: 17px;
+}
+
+.startButtonContainer {
+    display: flex;
+    right: 0;
+    padding: 10px;
+    background-color: #111212;
+    border-radius: 50%;
+    position: absolute;
+}
+
+.startButton {
+    margin-right: -2px;
+    width: 14px;
+    height: 16px;
 }

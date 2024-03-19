@@ -14,7 +14,7 @@ export class TestPlanService {
     }
 
     static async getChildrenByParentGuid(parentGuid: string) {
-        const response = await axiosInstance.get<ITestObject[]>(
+        return await axiosInstance.get<ITestObject[]>(
             BASE_API_URL + '/test-plan/elements',
             {
                 params: {
@@ -22,7 +22,6 @@ export class TestPlanService {
                 }
             }
         )
-        return response.data
     }
 
     static async addTestPlanElement(newElement: INewTestObject) {
@@ -55,6 +54,17 @@ export class TestPlanService {
         return await axiosInstance.put<Boolean>(
             BASE_API_URL + '/test-plan/thread-group',
             updatedThreadGroup
+        )
+    }
+
+    static async startTest(testPlanGuid: string) {
+        await axiosInstance.get(
+            BASE_API_URL + '/test-plan/result',
+            {
+                params: {
+                    guid: testPlanGuid
+                }
+            }
         )
     }
 

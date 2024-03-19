@@ -27,7 +27,7 @@ const TestScenarios = () => {
     useEffect(() => {
         if (testPlan !== undefined)
             TestPlanService.getChildrenByParentGuid(testPlan?.guid).then(response => 
-                setThreadGroups(response)
+                setThreadGroups(response.data)
             )
     }, [testPlan])
 
@@ -36,8 +36,10 @@ const TestScenarios = () => {
 
     useEffect(() => {
         if (selectedThreadGroup?.guid !== null && selectedThreadGroup?.guid !== undefined)
-            TestPlanService.getChildrenByParentGuid(selectedThreadGroup?.guid).then(response => 
-                setScenarioDashboardItems(response)
+            TestPlanService.getChildrenByParentGuid(selectedThreadGroup?.guid).then(response => {
+                if (response.status === OK_RESPONSE_CODE)
+                    setScenarioDashboardItems(response.data)
+            }
             )
         else
             setScenarioDashboardItems(null)
@@ -96,7 +98,7 @@ const TestScenarios = () => {
                             setScenarioDashboardItems([response.data])
                         else
                             setScenarioDashboardItems([...scenarioDashboardItems, response.data])
-                        console.log(response.data)}
+                    }
                 })
         }
     }
@@ -126,7 +128,7 @@ const TestScenarios = () => {
         <div className={styles.testScenarios}>
             <Sidebar>
                 <div className={styles.sidebarContentContainer}>
-                    <TestPlanHeader />
+                    <TestPlanHeader guid={testPlan?.guid} />
                     {threadGroups.map(threadGroup =>
                         <Tab 
                             children={

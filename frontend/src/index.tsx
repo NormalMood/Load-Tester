@@ -7,9 +7,7 @@ const wrapper = ReactDOM.createRoot(
   document.getElementById('wrapper') as HTMLElement
 );
 wrapper.render(
-  <React.StrictMode>
     <BrowserRouter>
       <App />
     </BrowserRouter>
-  </React.StrictMode>
 );

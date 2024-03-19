@@ -51,9 +51,7 @@ const ScenarioDashboard: FC<IScenarioDashboardProps> = ({selectedThreadGroup, it
     }
     
 
-    useEffect(() => {
-        setDeleteImgVisibility(new Array(items?.length).fill({display: 'none'}))
-    }, [items])
+    
 
     const guidToHttpSampler = useUpdatedHttpSamplersStore(state => state.guidToHttpSampler)
     const clearGuidToHttpSampler = useUpdatedHttpSamplersStore(state => state.clear)
@@ -123,13 +121,17 @@ const ScenarioDashboard: FC<IScenarioDashboardProps> = ({selectedThreadGroup, it
             guid: selectedThreadGroup?.guid as string,
             data: {
                 name,
-                threads,
-                rampUp,
-                loops
+                threads: Number(threads),
+                rampUp: Number(rampUp),
+                loops: Number(loops)
             }
         }
         setUpdatedThreadGroup(updatedThreadGroup)
     }
+
+    useEffect(() => {
+        setDeleteImgVisibility(new Array(items?.length).fill({display: 'none'}))
+    }, [items])
 
     return (
         <div className={styles.scenarioDashboard}>
