@@ -45,6 +45,9 @@
     display: grid;
     grid-template-columns: repeat(3, max-content);
     column-gap: 10px;
+    border-top: #1D1F1F 1px solid;
+    margin-top: 5px;
+    padding-top: 5px;
 }
 
 .tabSelected > span {
@@ -70,8 +73,6 @@
     display: grid;
     row-gap: 10px;
     grid-template-rows: repeat(2, min-content);
-    border-bottom: #1D1F1F 1px solid;
-    padding-bottom: 10px;
 }
 
 .httpSamplerSelect {
@@ -91,4 +92,24 @@
 
 .httpSamplerJsonTextarea {
     min-height: 100px;
+}
+
+.newHeaderButton {
+    width: fit-content;
+    background-color: unset;
+}
+
+.headersContainer {
+    display: grid;
+    column-gap: 10px;
+    row-gap: 10px;
+    grid-template-columns: auto auto;
+}
+
+.headerKeyInput {
+    grid-column: 1;
+}
+
+.headerValueInput {
+    grid-column: 2;
 }

@@ -8,5 +8,7 @@ export interface IHttpSampler extends ITestObject {
         path?: string;
         port?: number;
         bodyJson?: string;
+        headerKeys?: string[];
+        headerValues?: string[];
     }
 }

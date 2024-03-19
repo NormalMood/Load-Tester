@@ -7,6 +7,8 @@ import Select from '../Select/Select';
 import Input from '../Input/Input';
 import useUpdatedHttpSamplersStore from '../../../store/useUpdatedHttpSamplersStore';
 import Textarea from '../Textarea/Textarea';
+import Button from '../Button/Button';
+import testScenarioStyles from '../../../styles/TestScenarios.module.css';
 
 interface IHttpSamplerProps {
     httpSampler: IHttpSampler;
@@ -26,38 +28,69 @@ const HttpSampler: FC<IHttpSamplerProps> = ({httpSampler}) => {
     const [name, setName] = useState(httpSampler.data?.name)
     const onNameChangedHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
         setName(e.target.value)
-        updateHttpSampler(e.target.value, method, domain, path, port, bodyJson)
+        updateHttpSampler(e.target.value, method, domain, path, port, bodyJson, headerKeys, headerValues)
     }
 
     const [method, setMethod] = useState(httpSampler.data?.method)
     const onSelectMethod = (e: React.ChangeEvent<HTMLSelectElement>) => {
         setMethod(e.target.value)
-        updateHttpSampler(name, e.target.value, domain, path, port, bodyJson)
+        updateHttpSampler(name, e.target.value, domain, path, port, bodyJson, headerKeys, headerValues)
     }
 
     const [domain, setDomain] = useState(httpSampler.data?.domain)
     const onDomainChangedHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
         setDomain(e.target.value)
-        updateHttpSampler(name, method, e.target.value, path, port, bodyJson)
+        updateHttpSampler(name, method, e.target.value, path, port, bodyJson, headerKeys, headerValues)
     }
 
     const [path, setPath] = useState(httpSampler.data?.path)
     const onPathChangedHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
         setPath(e.target.value)
-        updateHttpSampler(name, method, domain, e.target.value, port, bodyJson)
+        updateHttpSampler(name, method, domain, e.target.value, port, bodyJson, headerKeys, headerValues)
     }
 
     const [port, setPort] = useState(httpSampler.data?.port)
     const onPortChangedHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
         setPort(e.target.value as any as number)
-        updateHttpSampler(name, method, domain, path, e.target.value as any as number, bodyJson)
+        updateHttpSampler(name, method, domain, path, e.target.value as any as number, bodyJson, headerKeys, headerValues)
     }
 
     const [bodyJson, setBodyJson] = useState(httpSampler.data?.bodyJson)
     const onBodyJsonChangedHandler = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         setBodyJson(e.target.value)
-        updateHttpSampler(name, method, domain, path, port, e.target.value)
+        updateHttpSampler(name, method, domain, path, port, e.target.value, headerKeys, headerValues)
     }
+
+    const [headerKeys, setHeaderKeys] = useState(httpSampler.data?.headerKeys)
+    const [headerValues, setHeaderValues] = useState(httpSampler.data?.headerValues)
+    const addHeader = () => {
+        if (headerKeys === undefined && headerValues === undefined) {
+            setHeaderKeys([''])
+            setHeaderValues([''])
+        }
+        else {
+            setHeaderKeys([...(headerKeys as string[]), ''])
+            setHeaderValues([...(headerValues as string[]), ''])
+        }
+    }
+    const onHeaderKeysChangedHandler = (headerKey: string, index: number) => {
+        if (headerKeys !== undefined) {
+            const headerKeysUpdated = [...headerKeys]
+            headerKeysUpdated[index] = headerKey
+            setHeaderKeys(headerKeysUpdated)
+            updateHttpSampler(name, method, domain, path, port, bodyJson, headerKeysUpdated, headerValues)
+
+        }
+    }
+    const onHeaderValuesChangedHandler = (headerValue: string, index: number) => {
+        if (headerValues !== undefined) {
+            const headerValuesUpdated = [...headerValues]
+            headerValuesUpdated[index] = headerValue
+            setHeaderValues(headerValuesUpdated)
+            updateHttpSampler(name, method, domain, path, port, bodyJson, headerKeys, headerValuesUpdated)
+        }
+    }
+
 
     const setHTTPSampler = useUpdatedHttpSamplersStore(state => state.setHttpSampler)
 
@@ -67,7 +100,9 @@ const HttpSampler: FC<IHttpSamplerProps> = ({httpSampler}) => {
         domain: string | undefined,
         path: string | undefined,
         port: number | undefined,
-        bodyJson: string | undefined
+        bodyJson: string | undefined,
+        headerKeys: string[] | undefined,
+        headerValues: string[] | undefined
     ) => {
         const updatedHTTPSampler: IHttpSampler = {
             parentGuid: httpSampler.parentGuid as string,
@@ -78,7 +113,9 @@ const HttpSampler: FC<IHttpSamplerProps> = ({httpSampler}) => {
                 domain,
                 path,
                 port,
-                bodyJson
+                bodyJson,
+                headerKeys,
+                headerValues
             }
         }
         setHTTPSampler(httpSampler.guid, updatedHTTPSampler)
@@ -166,6 +203,36 @@ const HttpSampler: FC<IHttpSamplerProps> = ({httpSampler}) => {
                                         />
                                     </div>
                                 </div>
+                                <b>Заголовки</b>
+                                <div className={styles.headersContainer}>
+                                    {headerKeys?.map((headerKey, index) => 
+                                        <>
+                                            <Input 
+                                                value={headerKey} 
+                                                onChange={(e) => onHeaderKeysChangedHandler(e.target.value, index)} 
+                                                mix={styles.headerKeyInput}
+                                            />
+                                            <Input 
+                                                value={(headerValues as string[]).at(index)} 
+                                                onChange={(e) => onHeaderValuesChangedHandler(e.target.value, index)} 
+                                                mix={styles.headerValueInput} 
+                                            />
+                                        </>
+                                    )}
+                                </div>
+                                <Button 
+                                    children={
+                                        <span>
+                                            <img 
+                                                src='./images/plus.svg' 
+                                                className={testScenarioStyles.accentButtonImg} 
+                                            />
+                                            &nbsp;Добавить
+                                        </span>
+                                    }  
+                                    mix={[testScenarioStyles.accentButton, styles.newHeaderButton].join(' ')}
+                                    onClick={() => addHeader()}
+                                />
                                 <div className={styles.tabsContainer}>
                                     <Tab 
                                         children={

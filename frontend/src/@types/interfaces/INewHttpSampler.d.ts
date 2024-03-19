@@ -11,6 +11,8 @@ export interface INewHttpSampler extends INewTestObject {
             path?: string;
             port?: number;
             bodyJson?: string;
+            headerKeys?: string[];
+            headerValues?: string[];
         }
     }
 }
