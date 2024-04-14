@@ -29,6 +29,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.apache.jmeter.reporters.ResultCollector;
 import org.apache.jmeter.reporters.Summariser;
+import org.apache.jmeter.samplers.SampleSaveConfiguration;
 import org.apache.jmeter.testelement.TestElement;
 import org.apache.jmeter.util.JMeterUtils;
 import org.apache.jorphan.collections.HashTree;
@@ -247,8 +248,10 @@ public class TestPlanService implements LTTestPlan {
 	}
 	
 	private void addResultCollectorInHashTree(Object testPlan) {
+		String summariserName = JMeterUtils.getPropDefault("summariser.name", "summary");
+		//JMeterUtils.setProperty("summariser.interval", "1");
+		//System.out.println("interval: " + JMeterUtils.getPropDefault("summariser.interval", 30));
 		Summariser summer = null;
-        String summariserName = JMeterUtils.getPropDefault("summariser.name", "summary");
         if (summariserName.length() > 0) {
             summer = new Summariser(summariserName);
         }
@@ -259,6 +262,18 @@ public class TestPlanService implements LTTestPlan {
         logger.setFilename(resultCollectorPath);
         logger.setProperty(TestElement.TEST_CLASS, ResultCollector.class.getName());
         logger.setProperty(TestElement.GUI_CLASS, "SummaryReport");
+        SampleSaveConfiguration saveConfig = logger.getSaveConfig();
+        saveConfig.setThreadName(false);
+        saveConfig.setBytes(false);
+        saveConfig.setSentBytes(false);
+        saveConfig.setThreadCounts(false);
+        saveConfig.setDataType(false);
+        saveConfig.setAssertionResultsFailureMessage(false);
+        saveConfig.setLabel(false);
+        saveConfig.setIdleTime(false);
+        saveConfig.setCode(false);
+        saveConfig.setMessage(false);
+        logger.setSaveConfig(saveConfig);
         
         TestPlanModel.testPlanTree.add(testPlan, logger);
 	}
