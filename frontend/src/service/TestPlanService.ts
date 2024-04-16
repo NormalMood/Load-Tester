@@ -58,7 +58,7 @@ export class TestPlanService {
     }
 
     static async startTest(testPlanGuid: string) {
-        await axiosInstance.get(
+        return await axiosInstance.get<string[][]>(
             BASE_API_URL + '/test-plan/result',
             {
                 params: {
