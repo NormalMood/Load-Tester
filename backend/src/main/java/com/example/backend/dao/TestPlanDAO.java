@@ -28,6 +28,10 @@ public interface TestPlanDAO {
 	
 	int findChildrenQuantityByParentGuid(String parentGuid);
 	
+	Document findSSHSettings();
+	
+	Boolean saveSSHSettings(String user, String password, String server, int port, int interval);
+	
 	void deleteDefaultUserCollection();
 
 }

@@ -123,6 +123,26 @@ public class MongoDBDAO implements TestPlanDAO {
 				.get(JsonFieldModel.CHILDREN, ArrayList.class)
 				.size();
 	}
+	
+	@Override
+	public Document findSSHSettings() {
+		Query query = new Query(Criteria.where(JsonFieldModel.SERVER).exists(true));
+		return mongoTemplate.findOne(query, Document.class, DEFAULT_COLLECTION);
+	}
+	
+	@Override
+	public Boolean saveSSHSettings(String user, String password, String server, int port, int interval) {
+		Query query = new Query();
+		query.addCriteria(Criteria.where(JsonFieldModel.SERVER).exists(true));
+		Update update = new Update();
+		update.set(JsonFieldModel.USER, user);
+		update.set(JsonFieldModel.PASSWORD, password);
+		update.set(JsonFieldModel.SERVER, server);
+		update.set(JsonFieldModel.PORT, port);
+		update.set(JsonFieldModel.INTERVAL, interval);
+		UpdateResult result = mongoTemplate.upsert(query, update, DEFAULT_COLLECTION);
+		return result.getUpsertedId() != null || result.getModifiedCount() > 0;
+	}
 
 	@Override
 	public void deleteDefaultUserCollection() {
