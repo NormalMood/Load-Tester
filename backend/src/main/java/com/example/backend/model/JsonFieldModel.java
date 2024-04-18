@@ -47,5 +47,9 @@ public class JsonFieldModel {
 	public static final String SERVER = "server";
 	
 	public static final String INTERVAL = "interval";
+	
+	public static final String MEMORY = "memory";
+	
+	public static final String CPU = "cpu";
 
 }
