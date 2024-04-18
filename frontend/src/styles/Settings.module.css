@@ -1,0 +1,22 @@
+.settingsContentContainer {
+    width: 300px;
+    margin-left: 0px;
+    grid-template-rows: repeat(5, min-content);
+}
+
+.imgsSettingsContainer {
+    width: 500px;
+}
+
+.sshSettingsHeader {
+    padding: 0px 0px 10px 0px;
+}
+
+.settings {
+    display: flex;
+    justify-content: center;
+}
+
+.saveImg {
+    grid-column: 2;
+}

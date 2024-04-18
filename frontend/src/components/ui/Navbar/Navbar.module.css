@@ -1,14 +1,16 @@
 .navbar {
     display: grid;
-    grid-template-columns: auto auto;
+    grid-template-columns: repeat(3, 130px);
     background-color: #262929;
     width: fit-content;
     border-radius: 10px;
 }
 
 .navbarTab {
-    padding: 10px 40px;
+    display: flex;
+    padding: 10px 0px;
     border-radius: 10px;
+    justify-content: center;
 }
 
 .navbarTabActive {

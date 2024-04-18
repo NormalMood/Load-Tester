@@ -1,4 +1,3 @@
-import { Outlet } from  'react-router-dom';
 import { FC } from 'react';
 import styles from './Header.module.css'
 
