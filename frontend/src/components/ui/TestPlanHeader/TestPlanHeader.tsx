@@ -1,10 +1,11 @@
-import { FC } from 'react';
+import { FC, useEffect } from 'react';
 import styles from './TestPlanHeader.module.css';
 import { TestPlanService } from '../../../service/TestPlanService';
-import { BASE_API_URL, OK_RESPONSE_CODE, axiosInstance } from '../../../api/axiosInstance';
+import { OK_RESPONSE_CODE } from '../../../api/axiosInstance';
 import { getErrorsAndURLObjectFromArray, getURLToTestResultsMapFromArray } from '../../../utils/Utils';
 import useTestResultsStore from '../../../store/useTestResultsStore';
-import { ITestPlan } from '../../../@types/interfaces/ITestPlan';
+import { SSHConnectionService } from '../../../service/SSHConnectionService';
+import useLoadFromServerStore from '../../../store/useLoadFromServerStore';
 
 interface ITestPlanHeaderProps {
     guid?: string;
@@ -17,48 +18,47 @@ const TestPlanHeader: FC<ITestPlanHeaderProps> = ({guid}) => {
     const setFailedRequests = useTestResultsStore(state => state.setFailedRequests)
     const clearFailedRequests = useTestResultsStore(state => state.clearFailedRequests)
 
-    async function makeSequentialRequests(count: number) {
-        if (count > 0) {
-          // Ожидание 2 секунд перед выполнением запроса
-          await new Promise(resolve => setTimeout(resolve, 2000));
-  
-          // Выполнение запроса axios.get('url2')
-          axiosInstance.get<ITestPlan>(
-                    BASE_API_URL + '/test-plan'
-                ).then(response => console.log(response.data))
-  
-          // Обработка данных из дополнительного запроса (additionalResponse.data)
-  
-          // Вызов рекурсивной функции для следующего запроса
-          await makeSequentialRequests(count - 1);
-        }
-      }
-      async function test() {
-        axiosInstance.get<string[][]>(
-            BASE_API_URL + '/test-plan/result',
-            {
-                params: {
-                    guid: guid
-                }
+    const addLoadFromServerResponse = useLoadFromServerStore(state => state.addLoadFromServerResponse)
+    const clearLoadFromServer = useLoadFromServerStore(state => state.clear)
+
+    const makeSequentialRequestsToServer = async () => {
+        clearLoadFromServer()
+        const sshSettings = await SSHConnectionService.getSSHSettings()
+        const openSSHConnectionResponse = await SSHConnectionService.openSSHConnection()
+        if (openSSHConnectionResponse.status === OK_RESPONSE_CODE) {
+            if (sshSettings.interval !== undefined) {
+                await getLoadFromServer(sshSettings.interval)
+                await SSHConnectionService.closeSSHConnection()
             }
-        ).then(response => console.log(response.data))
-      }
+        }
+    }
+
+    const getLoadFromServer = async (interval: number) => {
+        if (!isLoadTestingFinished) {
+            await new Promise(resolve => setTimeout(resolve, Number(interval) * 1000))
+            await SSHConnectionService.getLoadFromServer().then(response => addLoadFromServerResponse(response))
+            await getLoadFromServer(interval)
+        }
+    }
+
+    let isLoadTestingFinished = true
 
     const startTest = async () => {
         if (guid !== undefined) {
+            isLoadTestingFinished = false
             clearURLToTimes()
             clearFailedRequests()
-            // await Promise.all([
-            //     makeSequentialRequests(30), 
-            //     test()
-            // ])
-            
-            await TestPlanService.startTest(guid).then(response => {
-                if (response.status === OK_RESPONSE_CODE) {
-                    setURLToTimes(getURLToTestResultsMapFromArray(response.data))
-                    setFailedRequests(getErrorsAndURLObjectFromArray(response.data))
-                }
-            })
+            await Promise.all([
+                TestPlanService.startTest(guid).then(response => {
+                    if (response.status === OK_RESPONSE_CODE) {
+                        setURLToTimes(getURLToTestResultsMapFromArray(response.data))
+                        setFailedRequests(getErrorsAndURLObjectFromArray(response.data))
+                        console.log(response.data)
+                        isLoadTestingFinished = true
+                    }
+                }),
+                makeSequentialRequestsToServer()
+            ])
         }
     }
     return (
