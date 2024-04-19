@@ -6,12 +6,17 @@ import { getErrorsAndURLObjectFromArray, getURLToTestResultsMapFromArray } from 
 import useTestResultsStore from '../../../store/useTestResultsStore';
 import { SSHConnectionService } from '../../../service/SSHConnectionService';
 import useLoadFromServerStore from '../../../store/useLoadFromServerStore';
+import useTestTimeStore from '../../../store/useTestTimeStore';
+import { useNavigate } from 'react-router-dom';
+import { TEST_RESULTS_PAGE_PATH } from '../../../@types/consts/pagesPaths';
 
 interface ITestPlanHeaderProps {
     guid?: string;
 }
 
 const TestPlanHeader: FC<ITestPlanHeaderProps> = ({guid}) => {
+    const MS_IN_SECOND = 1000
+
     const setURLToTimes = useTestResultsStore(state => state.setURLToTimes)
     const clearURLToTimes = useTestResultsStore(state => state.clearURLToTimes)
 
@@ -20,6 +25,10 @@ const TestPlanHeader: FC<ITestPlanHeaderProps> = ({guid}) => {
 
     const addLoadFromServerResponse = useLoadFromServerStore(state => state.addLoadFromServerResponse)
     const clearLoadFromServer = useLoadFromServerStore(state => state.clear)
+
+    const updateTestTime = useTestTimeStore(state => state.update)
+    const clearTestTime = useTestTimeStore(state => state.clear)
+    const setTargetTime = useTestTimeStore(state => state.setTargetTime)
 
     const makeSequentialRequestsToServer = async () => {
         clearLoadFromServer()
@@ -35,7 +44,7 @@ const TestPlanHeader: FC<ITestPlanHeaderProps> = ({guid}) => {
 
     const getLoadFromServer = async (interval: number) => {
         if (!isLoadTestingFinished) {
-            await new Promise(resolve => setTimeout(resolve, Number(interval) * 1000))
+            await new Promise(resolve => setTimeout(resolve, Number(interval) * MS_IN_SECOND))
             await SSHConnectionService.getLoadFromServer().then(response => addLoadFromServerResponse(response))
             await getLoadFromServer(interval)
         }
@@ -43,17 +52,22 @@ const TestPlanHeader: FC<ITestPlanHeaderProps> = ({guid}) => {
 
     let isLoadTestingFinished = true
 
+    const navigate = useNavigate()
+
     const startTest = async () => {
         if (guid !== undefined) {
-            isLoadTestingFinished = false
+            isLoadTestingFinished = false   
+            clearTestTime()
+            await TestPlanService.getChildrenByParentGuid(guid as string).then(response => updateTestTime(response.data))
+            setTargetTime()
             clearURLToTimes()
             clearFailedRequests()
+            navigate(TEST_RESULTS_PAGE_PATH)
             await Promise.all([
                 TestPlanService.startTest(guid).then(response => {
                     if (response.status === OK_RESPONSE_CODE) {
                         setURLToTimes(getURLToTestResultsMapFromArray(response.data))
                         setFailedRequests(getErrorsAndURLObjectFromArray(response.data))
-                        console.log(response.data)
                         isLoadTestingFinished = true
                     }
                 }),

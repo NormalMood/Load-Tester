@@ -51,8 +51,6 @@ const ScenarioDashboard: FC<IScenarioDashboardProps> = ({selectedThreadGroup, it
     }
     
 
-    
-
     const guidToHttpSampler = useUpdatedHttpSamplersStore(state => state.guidToHttpSampler)
     const clearGuidToHttpSampler = useUpdatedHttpSamplersStore(state => state.clear)
 
