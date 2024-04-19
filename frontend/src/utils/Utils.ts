@@ -8,8 +8,8 @@ export const getObjectsArrayFromMap = (map: Map<string, ITestObject>) => {
     return arr
 }
 
-const getHHMMFromTimeStamp = (timeStamp: string) => {
-    const date = new Date(parseInt(timeStamp))
+export const getHHMMFromTimeStamp = (timeStamp: string | number) => {
+    const date = new Date(typeof timeStamp === 'string' ? parseInt(timeStamp) : timeStamp)
     const hours = date.getHours()
     const minutes = date.getMinutes()
     const seconds = date.getSeconds()
