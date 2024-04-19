@@ -47,8 +47,8 @@ public class SSHConnectionService implements LTSSHConnection {
 	}
 	
 	@Override
-	public Map<String, Float> getLoadFromServer() throws JSchException, InterruptedException {
-		Map<String, Float> loadFromServer = new HashMap<>();
+	public Map<String, Object> getLoadFromServer() throws JSchException, InterruptedException {
+		Map<String, Object> loadFromServer = new HashMap<>();
 		
 		channel = (ChannelExec)session.openChannel("exec");
         channel.setCommand(
@@ -63,8 +63,9 @@ public class SSHConnectionService implements LTSSHConnection {
         String responseString = new String(serverResponseStream.toByteArray());
         String[] responseStringArray = responseString.split("\n");
         
-        loadFromServer.put(JsonFieldModel.MEMORY, Float.parseFloat(responseStringArray[0]));
-        loadFromServer.put(JsonFieldModel.CPU, Float.parseFloat(responseStringArray[1]));
+        loadFromServer.put(JsonFieldModel.TIMESTAMP, System.currentTimeMillis());
+        loadFromServer.put(JsonFieldModel.MEMORY, responseStringArray[0]);
+        loadFromServer.put(JsonFieldModel.CPU, responseStringArray[1]);
 		return loadFromServer;
 	}
 	

@@ -11,7 +11,7 @@ public interface LTSSHConnection {
 	
 	Boolean openSSHConnection() throws JSchException;
 	
-	Map<String, Float> getLoadFromServer() throws JSchException, InterruptedException;
+	Map<String, Object> getLoadFromServer() throws JSchException, InterruptedException;
 	
 	Boolean closeSSHConnection();
 	
