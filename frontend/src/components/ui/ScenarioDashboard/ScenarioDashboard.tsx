@@ -212,14 +212,14 @@ const ScenarioDashboard: FC<IScenarioDashboardProps> = ({selectedThreadGroup, it
                                     src='./images/plus.svg' 
                                     className={testScenarioStyles.accentButtonImg} 
                                 />
-                                &nbsp;Элемент сценария
+                                &nbsp;Запрос
                             </span>
                         }  
                         mix={[testScenarioStyles.accentButton, styles.newObjectButton].join(' ')}
-                        onClick={() => setIsObjectsOptionVisible(true)}
+                        onClick={() => addItemCallback(HTTP_SAMPLER)/*() => setIsObjectsOptionVisible(true)*/}
                     />
                 }
-                <Popup 
+                {/* <Popup 
                     ref={objectsOptionRef}
                     className={isObjectsOptionVisible? styles.objectsOptionPopup : styles.objectsOptionPopupHidden}
                 >
@@ -230,7 +230,7 @@ const ScenarioDashboard: FC<IScenarioDashboardProps> = ({selectedThreadGroup, it
                         <img src='./images/request.svg' className={styles.requestImg} />
                         <span>&nbsp;&nbsp;Запрос</span>
                     </div>
-                </Popup>
+                </Popup> */}
             </div>
         </div>
     )
