@@ -3,9 +3,11 @@ package com.example.backend.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.backend.service.LTSSHConnection;
@@ -41,9 +43,19 @@ public class SSHConnectionController {
 		return ResponseEntity.ok(sshConnection.findSSHSettings());
 	}
 	
-	@PutMapping("/ssh-connection/settings")
+	@PostMapping("/ssh-connection/settings")
+	public ResponseEntity<?> saveSSHSettings(@RequestBody JsonNode sshSettings) {
+		return ResponseEntity.ok(sshConnection.saveSSHSettings(sshSettings));
+	}
+	
+	@PutMapping("/ssh-connection/settings") 
 	public ResponseEntity<?> updateSSHSettings(@RequestBody JsonNode sshSettings) {
 		return ResponseEntity.ok(sshConnection.updateSSHSettings(sshSettings));
+	}
+	
+	@DeleteMapping("/ssh-connection/settings")
+	public ResponseEntity<?> deleteSSHSettings(@RequestParam String guid) {
+		return ResponseEntity.ok(sshConnection.deleteSSHSettings(guid));
 	}
 
 }

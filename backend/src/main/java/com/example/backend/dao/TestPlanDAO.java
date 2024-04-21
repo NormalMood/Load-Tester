@@ -28,9 +28,17 @@ public interface TestPlanDAO {
 	
 	int findChildrenQuantityByParentGuid(String parentGuid);
 	
-	Document findSSHSettings();
+	List<Document> findSSHSettings();
 	
-	Boolean saveSSHSettings(String user, String password, String server, int port, int interval);
+	int findSSHSettingsQuantity();
+	
+	Boolean saveSSHSettings(JsonNode sshSettings);
+	
+	Boolean updateSSHSettings(JsonNode sshSettings);
+	
+	Boolean deleteSSHSettings(String guid);
+	
+	Boolean deleteSSHSettingsDocument();
 	
 	void deleteDefaultUserCollection();
 

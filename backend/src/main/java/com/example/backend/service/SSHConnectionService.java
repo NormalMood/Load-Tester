@@ -2,7 +2,9 @@ package com.example.backend.service;
 
 import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.bson.Document;
 import org.springframework.stereotype.Service;
@@ -11,6 +13,7 @@ import com.example.backend.dao.TestPlanDAO;
 import com.example.backend.model.JsonFieldModel;
 import com.example.backend.model.ServerCommandModel;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
@@ -31,8 +34,13 @@ public class SSHConnectionService implements LTSSHConnection {
 	private ByteArrayOutputStream serverResponseStream = null;
 	
 	@Override
+	public String getRandomUUID() {
+		return UUID.randomUUID().toString();
+	}
+	
+	@Override
 	public Boolean openSSHConnection() throws JSchException {
-		Document sshSettings = findSSHSettings();
+		Document sshSettings = new Document();//findSSHSettings();
 		session = new JSch().getSession(
 			sshSettings.getString(JsonFieldModel.USER), 
 			sshSettings.getString(JsonFieldModel.SERVER), 
@@ -81,35 +89,36 @@ public class SSHConnectionService implements LTSSHConnection {
 	}
 	
 	@Override
-	public Document findSSHSettings() {
+	public List<Document> findSSHSettings() {
 		return testPlanDAO.findSSHSettings();
 	}
 	
 	@Override
-	public Boolean updateSSHSettings(JsonNode sshSettings) {
-		String user = null;
-		String password = null;
-		String server = null;
-		if (sshSettings.get(JsonFieldModel.USER) != null)
-			user = sshSettings.get(JsonFieldModel.USER).asText();
-		if (sshSettings.get(JsonFieldModel.PASSWORD) != null)
-			password = sshSettings.get(JsonFieldModel.PASSWORD).asText();
-		if (sshSettings.get(JsonFieldModel.SERVER) != null)
-			server = sshSettings.get(JsonFieldModel.SERVER).asText();
-		int port = 22;
-		int interval = 1;
-		if (sshSettings.get(JsonFieldModel.PORT) != null)
-			port = sshSettings.get(JsonFieldModel.PORT).asInt();
-		if (sshSettings.get(JsonFieldModel.INTERVAL) != null)
-			interval = sshSettings.get(JsonFieldModel.INTERVAL).asInt();
-		return testPlanDAO
+	public Document saveSSHSettings(JsonNode sshSettings) {
+		ObjectNode savedSSHSettings = 
+				((ObjectNode)sshSettings)
+					.put(JsonFieldModel.GUID, getRandomUUID());
+		Boolean wasSaved = testPlanDAO
 				.saveSSHSettings(
-					user,
-					password,
-					server,
-					port,
-					interval
+					savedSSHSettings
 				);
+		if (wasSaved)
+			return Document.parse(savedSSHSettings.toString());
+		return null;
+	}
+	
+	@Override
+	public Boolean updateSSHSettings(JsonNode sshSettings) {
+		return testPlanDAO.updateSSHSettings(sshSettings);
+	}
+	
+	@Override
+	public Boolean deleteSSHSettings(String guid) {
+		Boolean wasSSHSettingsDeleted = testPlanDAO.deleteSSHSettings(guid);
+		Boolean wasSSHSettingsDocumentDeleted = false;
+		if (testPlanDAO.findSSHSettingsQuantity() == 0)
+			wasSSHSettingsDocumentDeleted = testPlanDAO.deleteSSHSettingsDocument();
+		return wasSSHSettingsDeleted || wasSSHSettingsDocumentDeleted;
 	}
 
 }

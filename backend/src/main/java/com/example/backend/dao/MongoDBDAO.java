@@ -125,23 +125,61 @@ public class MongoDBDAO implements TestPlanDAO {
 	}
 	
 	@Override
-	public Document findSSHSettings() {
-		Query query = new Query(Criteria.where(JsonFieldModel.SERVER).exists(true));
-		return mongoTemplate.findOne(query, Document.class, DEFAULT_COLLECTION);
+	public List<Document> findSSHSettings() {
+		Query query = new Query(Criteria.where(JsonFieldModel.SSH_SETTINGS).exists(true));
+		Document document = mongoTemplate
+				.findOne(query, Document.class, DEFAULT_COLLECTION);
+		if (document == null)
+			return List.of();
+		return (List<Document>)document.get(JsonFieldModel.SSH_SETTINGS);
 	}
 	
 	@Override
-	public Boolean saveSSHSettings(String user, String password, String server, int port, int interval) {
+	public int findSSHSettingsQuantity() {
+		Query query = new Query(Criteria.where(JsonFieldModel.SSH_SETTINGS).exists(true));
+		return mongoTemplate
+				.findOne(query, Document.class, DEFAULT_COLLECTION)
+				.get(JsonFieldModel.SSH_SETTINGS, ArrayList.class)
+				.size();
+	}
+	
+	@Override
+	public Boolean saveSSHSettings(JsonNode sshSettings) {
 		Query query = new Query();
-		query.addCriteria(Criteria.where(JsonFieldModel.SERVER).exists(true));
+		query.addCriteria(Criteria.where(JsonFieldModel.SSH_SETTINGS).exists(true));
 		Update update = new Update();
-		update.set(JsonFieldModel.USER, user);
-		update.set(JsonFieldModel.PASSWORD, password);
-		update.set(JsonFieldModel.SERVER, server);
-		update.set(JsonFieldModel.PORT, port);
-		update.set(JsonFieldModel.INTERVAL, interval);
+		update.push(JsonFieldModel.SSH_SETTINGS, Document.parse(sshSettings.toString()));
 		UpdateResult result = mongoTemplate.upsert(query, update, DEFAULT_COLLECTION);
 		return result.getUpsertedId() != null || result.getModifiedCount() > 0;
+	}
+	
+	@Override
+	public Boolean updateSSHSettings(JsonNode sshSettings) {
+		Query query = new Query(
+			Criteria
+				.where(JsonFieldModel.SSH_SETTINGS + "." + JsonFieldModel.GUID)
+				.is(sshSettings.get(JsonFieldModel.GUID).asText())
+		);
+		Update update = new Update();
+		update.set(JsonFieldModel.SSH_SETTINGS + ".$", Document.parse(sshSettings.toString()));
+		UpdateResult result = mongoTemplate.upsert(query, update, DEFAULT_COLLECTION);
+		return result.getUpsertedId() != null || result.getModifiedCount() > 0;
+	}
+	
+	@Override
+	public Boolean deleteSSHSettings(String guid) {
+		Query query = new Query(Criteria.where(JsonFieldModel.SSH_SETTINGS + "." + JsonFieldModel.GUID).is(guid));
+		Update update = new Update();
+		update.pull(JsonFieldModel.SSH_SETTINGS, new Query(Criteria.where(JsonFieldModel.GUID).is(guid)));
+		return mongoTemplate
+				.updateFirst(query, update, DEFAULT_COLLECTION)
+				.getModifiedCount() > 0;
+	}
+	
+	@Override
+	public Boolean deleteSSHSettingsDocument() {
+		Query query = new Query(Criteria.where(JsonFieldModel.SSH_SETTINGS).exists(true));
+		return mongoTemplate.remove(query, DEFAULT_COLLECTION).getDeletedCount() > 0;
 	}
 
 	@Override

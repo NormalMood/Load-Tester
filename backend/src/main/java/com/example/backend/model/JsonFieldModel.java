@@ -40,6 +40,8 @@ public class JsonFieldModel {
 	
 	public static final String HEADER_VALUES = "headerValues";
 	
+	public static final String SSH_SETTINGS = "sshSettings";
+	
 	public static final String USER = "user";
 	
 	public static final String PASSWORD = "password";
