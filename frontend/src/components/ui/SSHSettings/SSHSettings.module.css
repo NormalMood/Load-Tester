@@ -14,3 +14,18 @@
     width: 300px;
     padding: 30px 0px;
 }
+
+.sshSettingsCheckbox {
+    width: 18px;
+    height: 18px;
+    accent-color: #14CCB7;
+    cursor: pointer;
+}
+
+.sshSettingsCheckboxLabel {
+    display: grid;
+    grid-template-columns: auto auto;
+    column-gap: 10px;
+    width: fit-content;
+    cursor: pointer;
+}

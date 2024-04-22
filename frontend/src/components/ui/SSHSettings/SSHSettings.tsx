@@ -53,6 +53,17 @@ const SSHSettings: FC<ISSHSettingsProps> = ({settings}) => {
                     placeholder={INTERVAL_INPUT_PLACEHOLDER}
                     title={INTERVAL_INPUT_PLACEHOLDER}
                 />
+                <div>
+                    <label className={styles.sshSettingsCheckboxLabel}>
+                        <input 
+                            type='checkbox' 
+                            className={styles.sshSettingsCheckbox} 
+                            checked={isConnectionOn} 
+                            onClick={() => setIsConnectionOn(!isConnectionOn)}
+                        />
+                        <span>Подключиться</span>
+                    </label>
+                </div>
             </div>
         </div>
     )
