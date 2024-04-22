@@ -35,10 +35,10 @@ const TestPlanHeader: FC<ITestPlanHeaderProps> = ({guid}) => {
         const sshSettings = await SSHConnectionService.getSSHSettings()
         const openSSHConnectionResponse = await SSHConnectionService.openSSHConnection()
         if (openSSHConnectionResponse.status === OK_RESPONSE_CODE) {
-            if (sshSettings.interval !== undefined) {
-                await getLoadFromServer(sshSettings.interval)
-                await SSHConnectionService.closeSSHConnection()
-            }
+            // if (sshSettings.interval !== undefined) {
+            //     await getLoadFromServer(sshSettings.interval)
+            //     await SSHConnectionService.closeSSHConnection()
+            // }
         }
     }
 

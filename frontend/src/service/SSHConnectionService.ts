@@ -24,16 +24,35 @@ export class SSHConnectionService {
     }
 
     static async getSSHSettings() {
-        const response = await axiosInstance.get<ISSHSettings>(
+        const response = await axiosInstance.get<ISSHSettings[]>(
             BASE_API_URL + '/ssh-connection/settings'
         )
         return response.data
+    }
+
+    static async addSSHSettings(sshSettings: ISSHSettings) {
+        const response = await axiosInstance.post<ISSHSettings>(
+            BASE_API_URL + '/ssh-connection/settings',
+            sshSettings
+        )
+        return response
     }
 
     static async updateSSHSettings(updatedSSHSettings: ISSHSettings) {
         return await axiosInstance.put<Boolean>(
             BASE_API_URL + '/ssh-connection/settings',
             updatedSSHSettings
+        )
+    }
+
+    static async deleteSSHSettings(guid: string) {
+        return await axiosInstance.delete<Boolean>(
+            BASE_API_URL + '/ssh-connection/settings',
+            {
+                params: {
+                    guid
+                }
+            }
         )
     }
 

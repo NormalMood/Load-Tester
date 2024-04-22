@@ -1,22 +1,35 @@
-.settingsContentContainer {
-    width: 300px;
-    margin-left: 0px;
-    grid-template-rows: repeat(5, min-content);
+.settingsDashboard {
+    background-color: #1D1F1F;
+    min-height: 100%;
+    max-height: 100%;
+    overflow-y: auto;
 }
 
-.imgsSettingsContainer {
-    width: 500px;
+.settingsWrapper {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-width: 100%;
+    padding: 40px;
+    overflow-y: auto;
 }
 
 .sshSettingsHeader {
-    padding: 0px 0px 10px 0px;
+    grid-column: 1;
 }
 
-.settings {
-    display: flex;
-    justify-content: center;
+.sshSettingsContainer {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    row-gap: 40px;
+    grid-column: 1;
 }
 
-.saveImg {
+.newSSHSettingsButton {
+    width: fit-content;
+    grid-column: 1;
+}
+
+.sshSettingsWrapper {
     grid-column: 2;
+    width: 400px;
 }
