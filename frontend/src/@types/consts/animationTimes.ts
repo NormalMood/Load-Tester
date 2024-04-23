@@ -1,0 +1,1 @@
+export const SETTINGS_SAVED_ANIMATION_TIME = 200

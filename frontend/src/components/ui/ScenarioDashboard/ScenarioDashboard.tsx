@@ -13,6 +13,7 @@ import { OK_RESPONSE_CODE } from '../../../api/axiosInstance';
 import { IThreadGroup } from '../../../@types/interfaces/IThreadGroup';
 import Input from '../Input/Input';
 import useUpdatedThreadGroupsStore from '../../../store/useUpdatedThreadGroupsStore';
+import { SETTINGS_SAVED_ANIMATION_TIME } from '../../../@types/consts/animationTimes';
 
 interface IScenarioDashboardProps {
     selectedThreadGroup?: IThreadGroup | null;
@@ -49,6 +50,15 @@ const ScenarioDashboard: FC<IScenarioDashboardProps> = ({selectedThreadGroup, it
         deleteImgVisibilityUpdated[index] = display
         setDeleteImgVisibility(deleteImgVisibilityUpdated)
     }
+
+
+    const [isUpdatedHttpSamplersSaved, setIsUpdatedHttpSamplersSaved] = useState(false)
+    const [isUpdatedThreadGroupSaved, setIsUpdatedThreadGroupSaved] = useState(false)
+    const getSaveImgStyle = () => {
+        if (isUpdatedHttpSamplersSaved || isUpdatedThreadGroupSaved) 
+            return [styles.saveImg, styles.saveImgActive].join(' ')
+        return styles.saveImg
+    }
     
 
     const guidToHttpSampler = useUpdatedHttpSamplersStore(state => state.guidToHttpSampler)
@@ -58,14 +68,19 @@ const ScenarioDashboard: FC<IScenarioDashboardProps> = ({selectedThreadGroup, it
         console.log(getObjectsArrayFromMap(guidToHttpSampler))
         if (guidToHttpSampler.size > 0)
             await TestPlanService.updateTestPlanElements(getObjectsArrayFromMap(guidToHttpSampler)).then(response => {
-                if (response.status === OK_RESPONSE_CODE)
+                if (response.status === OK_RESPONSE_CODE && response.data) {
                     clearGuidToHttpSampler()
+                    setIsUpdatedHttpSamplersSaved(true)
+                    setTimeout(() => { setIsUpdatedHttpSamplersSaved(false) }, SETTINGS_SAVED_ANIMATION_TIME)
+                }
             })
         if (updatedThreadGroup !== null) {
             await TestPlanService.updateThreadGroup(updatedThreadGroup).then(response => {
-                if (response.status === OK_RESPONSE_CODE) {
+                if (response.status === OK_RESPONSE_CODE && response.data) {
                     changeThreadGroupNameOnUpdateCallback(updatedThreadGroup.guid, updatedThreadGroup.data?.name as any as string)
                     clearUpdatedThreadGroup()
+                    setIsUpdatedThreadGroupSaved(true)
+                    setTimeout(() => { setIsUpdatedThreadGroupSaved(false) }, SETTINGS_SAVED_ANIMATION_TIME)
                 }
             })
         }
@@ -143,7 +158,7 @@ const ScenarioDashboard: FC<IScenarioDashboardProps> = ({selectedThreadGroup, it
                         />
                         <img 
                             src='./images/save.svg' 
-                            className={styles.saveImg} 
+                            className={getSaveImgStyle()} 
                             onClick={() => saveObjects()}
                         />
                     </div>

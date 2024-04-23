@@ -83,7 +83,7 @@
     cursor: pointer;
 }
 
-.saveImg:active {
+.saveImgActive {
     width: 23px;
     height: 23px;
     margin-left: 2px;

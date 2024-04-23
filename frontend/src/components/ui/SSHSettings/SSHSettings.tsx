@@ -2,6 +2,7 @@ import { FC, useState } from 'react'
 import { ISSHSettings } from '../../../@types/interfaces/ISSHSettings'
 import Input from '../Input/Input'
 import styles from './SSHSettings.module.css'
+import useUpdatedSSHSettingsStore from '../../../store/useUpdatedSSHSettingsStore';
 
 interface ISSHSettingsProps {
     settings: ISSHSettings;
@@ -20,36 +21,83 @@ const SSHSettings: FC<ISSHSettingsProps> = ({settings}) => {
     const [port, setPort] = useState(settings.port)
     const [interval, setInterval] = useState(settings.interval)
     const [isConnectionOn, setIsConnectionOn] = useState(settings.isConnectionOn)
+
+    const setSSHSettings = useUpdatedSSHSettingsStore(state => state.setSSHSettings)
+
+    const onUserChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setUser(e.target.value)
+        updateSSHSettings(e.target.value, password, server, port, interval, isConnectionOn)
+    }
+
+    const onPasswordChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setPassword(e.target.value)
+        updateSSHSettings(user, e.target.value, server, port, interval, isConnectionOn)
+    }
+
+    const onServerChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setServer(e.target.value)
+        updateSSHSettings(user, password, e.target.value, port, interval, isConnectionOn)
+    }
+
+    const onPortChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setPort(e.target.value as unknown as number)
+        updateSSHSettings(user, password, server, e.target.value as unknown as number, interval, isConnectionOn)
+    }
+
+    const onIntervalChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setInterval(e.target.value as unknown as number)
+        updateSSHSettings(user, password, server, port, e.target.value as unknown as number, isConnectionOn)
+    }
+
+    const onIsConnectionOnClick = () => {
+        setIsConnectionOn(!isConnectionOn)
+        updateSSHSettings(user, password, server, port, interval, !isConnectionOn)
+    }
+
+    const updateSSHSettings = (user: string, password: string, server: string, port: number, interval: number, isConnectionOn: boolean) => {
+        setSSHSettings(
+            settings.guid as string, 
+            {
+                guid: settings.guid,
+                user,
+                password,
+                server,
+                port,
+                interval,
+                isConnectionOn
+            } as ISSHSettings)
+    }
+
     return (
         <div className={styles.sshSettings}>
             <div className={styles.sshSettingsContent}>
                 <Input 
                     value={user}
-                    onChange={() => {}}
+                    onChange={onUserChangeHandler}
                     placeholder={USER_INPUT_PLACEHOLDER}
                     title={USER_INPUT_PLACEHOLDER}
                 />
                 <Input 
                     value={password}
-                    onChange={() => {}}
+                    onChange={onPasswordChangeHandler}
                     placeholder={PASSWORD_INPUT_PLACEHOLDER}
                     title={PASSWORD_INPUT_PLACEHOLDER}
                 />
                 <Input 
                     value={server}
-                    onChange={() => {}}
+                    onChange={onServerChangeHandler}
                     placeholder={SERVER_INPUT_PLACEHOLDER}
                     title={SERVER_INPUT_PLACEHOLDER}
                 />
                 <Input 
                     value={port}
-                    onChange={() => {}}
+                    onChange={onPortChangeHandler}
                     placeholder={PORT_INPUT_PLACEHOLDER}
                     title={PORT_INPUT_PLACEHOLDER}
                 />
                 <Input 
                     value={interval}
-                    onChange={(e) => setInterval(e.target.value as any as number)}
+                    onChange={onIntervalChangeHandler}
                     placeholder={INTERVAL_INPUT_PLACEHOLDER}
                     title={INTERVAL_INPUT_PLACEHOLDER}
                 />
@@ -59,7 +107,7 @@ const SSHSettings: FC<ISSHSettingsProps> = ({settings}) => {
                             type='checkbox' 
                             className={styles.sshSettingsCheckbox} 
                             checked={isConnectionOn} 
-                            onClick={() => setIsConnectionOn(!isConnectionOn)}
+                            onClick={() => onIsConnectionOnClick()}
                         />
                         <span>Подключиться</span>
                     </label>
