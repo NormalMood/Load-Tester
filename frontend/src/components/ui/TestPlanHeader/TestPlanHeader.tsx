@@ -9,6 +9,7 @@ import useLoadFromServerStore from '../../../store/useLoadFromServerStore';
 import useTestTimeStore from '../../../store/useTestTimeStore';
 import { useNavigate } from 'react-router-dom';
 import { TEST_RESULTS_PAGE_PATH } from '../../../@types/consts/pagesPaths';
+import { ISSHSettings } from '../../../@types/interfaces/ISSHSettings';
 
 interface ITestPlanHeaderProps {
     guid?: string;
@@ -23,31 +24,33 @@ const TestPlanHeader: FC<ITestPlanHeaderProps> = ({guid}) => {
     const setFailedRequests = useTestResultsStore(state => state.setFailedRequests)
     const clearFailedRequests = useTestResultsStore(state => state.clearFailedRequests)
 
-    const addLoadFromServerResponse = useLoadFromServerStore(state => state.addLoadFromServerResponse)
+    const setLoadFromServerResponse = useLoadFromServerStore(state => state.setLoadFromServerResponse)
     const clearLoadFromServer = useLoadFromServerStore(state => state.clear)
 
     const updateTestTime = useTestTimeStore(state => state.update)
     const clearTestTime = useTestTimeStore(state => state.clear)
     const setTargetTime = useTestTimeStore(state => state.setTargetTime)
 
-    const makeSequentialRequestsToServer = async () => {
-        clearLoadFromServer()
-        const sshSettings = await SSHConnectionService.getSSHSettings()
-        const openSSHConnectionResponse = await SSHConnectionService.openSSHConnection()
-        if (openSSHConnectionResponse.status === OK_RESPONSE_CODE) {
-            // if (sshSettings.interval !== undefined) {
-            //     await getLoadFromServer(sshSettings.interval)
-            //     await SSHConnectionService.closeSSHConnection()
-            // }
+    const makeSequentialRequestsToServer = async (sshSettings: ISSHSettings) => {
+        await new Promise(resolve => setTimeout(resolve, Number(sshSettings.interval) * MS_IN_SECOND - 150))
+        if (!isLoadTestingFinished) {
+            await SSHConnectionService.getLoadFromServer(sshSettings.guid as string).then(response => 
+                setLoadFromServerResponse(sshSettings.guid + ':' + sshSettings.user + '@' + sshSettings.server, response)
+            )
+            await makeSequentialRequestsToServer(sshSettings)
         }
     }
 
-    const getLoadFromServer = async (interval: number) => {
-        if (!isLoadTestingFinished) {
-            await new Promise(resolve => setTimeout(resolve, Number(interval) * MS_IN_SECOND))
-            await SSHConnectionService.getLoadFromServer().then(response => addLoadFromServerResponse(response))
-            await getLoadFromServer(interval)
-        }
+    const getRequestsArrayPromise = async () => {
+        const requestsArray = new Array<Promise<void>>()
+        await SSHConnectionService.openSSHConnection().then(openSSHConnectionResponse => {
+            if (openSSHConnectionResponse.status === OK_RESPONSE_CODE) {
+                openSSHConnectionResponse.data.forEach(openedSSHConnection => 
+                    requestsArray.push(makeSequentialRequestsToServer(openedSSHConnection))
+                )
+            }
+        })
+        return requestsArray
     }
 
     let isLoadTestingFinished = true
@@ -62,17 +65,23 @@ const TestPlanHeader: FC<ITestPlanHeaderProps> = ({guid}) => {
             setTargetTime()
             clearURLToTimes()
             clearFailedRequests()
+            clearLoadFromServer()
             navigate(TEST_RESULTS_PAGE_PATH)
-            await Promise.all([
-                TestPlanService.startTest(guid).then(response => {
-                    if (response.status === OK_RESPONSE_CODE) {
-                        setURLToTimes(getURLToTestResultsMapFromArray(response.data))
-                        setFailedRequests(getErrorsAndURLObjectFromArray(response.data))
-                        isLoadTestingFinished = true
-                    }
-                }),
-                makeSequentialRequestsToServer()
-            ])
+            let requestsArray = new Array()
+            getRequestsArrayPromise().then(requestsArrayPromise => {
+                requestsArray = requestsArrayPromise
+                requestsArray.push(
+                    TestPlanService.startTest(guid).then(response => {
+                        if (response.status === OK_RESPONSE_CODE) {
+                            setURLToTimes(getURLToTestResultsMapFromArray(response.data))
+                            setFailedRequests(getErrorsAndURLObjectFromArray(response.data))
+                            isLoadTestingFinished = true
+                            SSHConnectionService.closeSSHConnection()
+                        }
+                    })
+                )
+            })
+            await Promise.all(requestsArray)
         }
     }
     return (

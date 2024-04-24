@@ -5,14 +5,19 @@ import { BASE_API_URL, axiosInstance } from "../api/axiosInstance";
 export class SSHConnectionService {
 
     static async openSSHConnection() {
-        return await axiosInstance.get<Boolean>(
+        return await axiosInstance.get<ISSHSettings[]>(
             BASE_API_URL + '/ssh-connection'
         )
     }
 
-    static async getLoadFromServer() {
+    static async getLoadFromServer(sshSettingsGuid: string) {
         const response = await axiosInstance.get<ILoadFromServer>(
-            BASE_API_URL + '/server/memory-cpu'
+            BASE_API_URL + '/server/memory-cpu',
+            {
+                params: {
+                    sshSettingsGuid
+                }
+            }
         )
         return response.data
     }

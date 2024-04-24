@@ -6,27 +6,43 @@ import { getHHMMFromTimeStamp } from '../utils/Utils';
 
 enableMapSet();
 
-interface IUseLoadFromServerStore {
+interface ILoad {
     timeStamp: string[];
     memory: number[];
     cpu: number[];
-    addLoadFromServerResponse: (loadFromServerResponse: ILoadFromServer) => void;
+}
+
+interface IUseLoadFromServerStore {
+    serverToLoad: Map<string, ILoad | undefined>;
+    setLoadFromServerResponse: (server: string, loadFromServerResponse: ILoadFromServer) => void;
     clear: () => void;
 }
 
 const store = immer<IUseLoadFromServerStore>((set) => ({
-    timeStamp: [],
-    memory: [],
-    cpu: [],
-    addLoadFromServerResponse: (loadFromServerResponse: ILoadFromServer) => {
+    serverToLoad: new Map<string, ILoad | undefined>(),
+    setLoadFromServerResponse: (server: string, loadFromServerResponse: ILoadFromServer) => {
         set((state) => { 
-            state.timeStamp.push(getHHMMFromTimeStamp(loadFromServerResponse.timeStamp));
-            state.memory.push(Number(loadFromServerResponse.memory));
-            state.cpu.push(Number(loadFromServerResponse.cpu));
+            if (loadFromServerResponse.timeStamp !== undefined) {
+                const loads = state.serverToLoad.get(server)
+                if (loads === undefined) {
+                    const load: ILoad = {
+                        timeStamp: [getHHMMFromTimeStamp(loadFromServerResponse.timeStamp)],
+                        memory: [Number(loadFromServerResponse.memory)],
+                        cpu: [Number(loadFromServerResponse.cpu)]
+                    }
+                    state.serverToLoad.set(server, load)
+                }
+                else {
+                    loads.timeStamp.push(getHHMMFromTimeStamp(loadFromServerResponse.timeStamp))
+                    loads.memory.push(Number(loadFromServerResponse.memory))
+                    loads.cpu.push(Number(loadFromServerResponse.cpu))
+                    state.serverToLoad.set(server, loads)
+                }
+            }
         })
     },
     clear: () => {
-        set((state) => { state.timeStamp = []; state.memory = []; state.cpu = []; })
+        set((state) => { state.serverToLoad.clear(); })
     }
 }))
 
