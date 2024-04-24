@@ -12,9 +12,11 @@ public interface LTSSHConnection {
 	
 	String getRandomUUID();
 	
-	Boolean openSSHConnection() throws JSchException;
+	List<Document> openSSHConnection() throws JSchException;
 	
-	Map<String, Object> getLoadFromServer() throws JSchException, InterruptedException;
+	Map<String, Object> getLoadFromServerAsync(String sshSettingsGuid) throws JSchException;
+	
+	Map<String, Object> getLoadFromServer(String sshSettingsGuid) throws JSchException, InterruptedException;
 	
 	Boolean closeSSHConnection();
 	

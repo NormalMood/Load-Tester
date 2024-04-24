@@ -1,10 +1,17 @@
 package com.example.backend.service;
 
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import org.bson.Document;
 import org.springframework.stereotype.Service;
@@ -27,11 +34,11 @@ public class SSHConnectionService implements LTSSHConnection {
 	
 	private final TestPlanDAO testPlanDAO;
 	
-	private Session session = null;
-	
-	private ChannelExec channel = null;
+	private Map<String, Session> openedSessions = null;
 	
 	private ByteArrayOutputStream serverResponseStream = null;
+	
+	private ExecutorService executor = Executors.newCachedThreadPool();
 	
 	@Override
 	public String getRandomUUID() {
@@ -39,26 +46,45 @@ public class SSHConnectionService implements LTSSHConnection {
 	}
 	
 	@Override
-	public Boolean openSSHConnection() throws JSchException {
-		Document sshSettings = new Document();//findSSHSettings();
-		session = new JSch().getSession(
-			sshSettings.getString(JsonFieldModel.USER), 
-			sshSettings.getString(JsonFieldModel.SERVER), 
-			sshSettings.getInteger(JsonFieldModel.PORT)
-		);
-        session.setPassword(sshSettings.getString(JsonFieldModel.PASSWORD));
-        session.setConfig("StrictHostKeyChecking", "no");
-        session.connect();
+	public List<Document> openSSHConnection() throws JSchException {
+        openedSessions = new HashMap<>();
+        List<Document> openedSSHConnections = new ArrayList<>();
+        List<Document> sshSettingsList = findSSHSettings();
+        for(Document sshSettings: sshSettingsList) {
+        	if (sshSettings.getBoolean(JsonFieldModel.IS_CONNECTION_ON)) {
+        		Session session = new JSch().getSession(
+        				sshSettings.getString(JsonFieldModel.USER), 
+        				sshSettings.getString(JsonFieldModel.SERVER), 
+        				sshSettings.getInteger(JsonFieldModel.PORT)
+        		);
+        		session.setPassword(sshSettings.getString(JsonFieldModel.PASSWORD));
+                session.setConfig("StrictHostKeyChecking", "no");
+                session.connect();
+                openedSessions.put(sshSettings.getString(JsonFieldModel.GUID), session);
+                openedSSHConnections.add(sshSettings);
+        	}
+        }
         
-        
-        return session.isConnected();
+        return openedSSHConnections;
 	}
 	
 	@Override
-	public Map<String, Object> getLoadFromServer() throws JSchException, InterruptedException {
+	public Map<String, Object> getLoadFromServerAsync(String sshSettingsGuid) throws JSchException {
+		Callable<Map<String, Object>> task = () -> getLoadFromServer(sshSettingsGuid);
+        Future<Map<String, Object>> future = executor.submit(task);
+        try {
+            return future.get();
+        } catch (Exception e) {
+        	e.printStackTrace();
+            return new HashMap<>();
+        }
+	}
+	
+	@Override
+	public Map<String, Object> getLoadFromServer(String sshSettingsGuid) throws JSchException, InterruptedException {
 		Map<String, Object> loadFromServer = new HashMap<>();
 		
-		channel = (ChannelExec)session.openChannel("exec");
+		ChannelExec channel = (ChannelExec)openedSessions.get(sshSettingsGuid).openChannel("exec");
         channel.setCommand(
         	ServerCommandModel.GET_USED_MEMORY_COMMAND + " && " + ServerCommandModel.GET_CPU_LOAD_COMMAND
         );
@@ -66,11 +92,14 @@ public class SSHConnectionService implements LTSSHConnection {
         channel.setOutputStream(serverResponseStream);
 		channel.connect();
         while (channel.isConnected()) {
-            Thread.sleep(30);
+            Thread.sleep(150);
         }
         String responseString = new String(serverResponseStream.toByteArray());
         String[] responseStringArray = responseString.split("\n");
-        
+        System.out.println("start");
+        System.out.println(responseString);
+        System.out.println("end");
+        channel.disconnect();
         loadFromServer.put(JsonFieldModel.TIMESTAMP, System.currentTimeMillis());
         loadFromServer.put(JsonFieldModel.MEMORY, responseStringArray[0]);
         loadFromServer.put(JsonFieldModel.CPU, responseStringArray[1]);
@@ -79,13 +108,12 @@ public class SSHConnectionService implements LTSSHConnection {
 	
 	@Override
 	public Boolean closeSSHConnection() {
-		if (session != null) {
-            session.disconnect();
-        }
-        if (channel != null) {
-            channel.disconnect();
-        }
-        return !session.isConnected();
+		Set<Boolean> isConnectedResults = new HashSet<>();
+		for(Session openedSession: openedSessions.values()) {
+			openedSession.disconnect();
+			isConnectedResults.add(openedSession.isConnected());
+		}
+        return !isConnectedResults.contains(true);
 	}
 	
 	@Override

@@ -29,8 +29,8 @@ public class SSHConnectionController {
 	}
 	
 	@GetMapping("/server/memory-cpu")
-	public ResponseEntity<?> getLoadFromServer() throws JSchException, InterruptedException {
-		return ResponseEntity.ok(sshConnection.getLoadFromServer());
+	public ResponseEntity<?> getLoadFromServer(@RequestParam String sshSettingsGuid) throws JSchException, InterruptedException {
+		return ResponseEntity.ok(sshConnection.getLoadFromServerAsync(sshSettingsGuid));
 	}
 	
 	@DeleteMapping("/ssh-connection")
