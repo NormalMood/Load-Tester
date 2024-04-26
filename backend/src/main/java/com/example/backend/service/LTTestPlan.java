@@ -29,4 +29,6 @@ public interface LTTestPlan {
 	
 	List<String[]> startTestPlan(Map<String, String> testPlanGuid);
 	
+	Boolean stopTest();
+	
 }

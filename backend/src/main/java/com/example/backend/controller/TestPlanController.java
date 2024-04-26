@@ -65,5 +65,10 @@ public class TestPlanController {
 	public List<String[]> startTestPlan(@RequestParam Map<String, String> testPlanGuid) {
 		return testPlan.startTestPlan(testPlanGuid);
 	}
+	
+	@DeleteMapping("/test-plan/result")
+	public ResponseEntity<?> stopTest() {
+		return ResponseEntity.ok(testPlan.stopTest());
+	}
 
 }

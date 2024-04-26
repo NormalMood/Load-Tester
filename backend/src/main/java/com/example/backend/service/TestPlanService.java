@@ -26,7 +26,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import lombok.RequiredArgsConstructor;
-
 import org.apache.jmeter.reporters.ResultCollector;
 import org.apache.jmeter.reporters.Summariser;
 import org.apache.jmeter.samplers.SampleSaveConfiguration;
@@ -174,6 +173,12 @@ public class TestPlanService implements LTTestPlan {
 		runTest();
 		clearTestPlanHashTree();
 		return getTestResult();
+	}
+	
+	@Override
+	public Boolean stopTest() {
+		JMeterConfig.jMeterEngine.stopTest(true);
+		return true;
 	}
 	
 	private Deque<HashTree> addTestPlanInHashTree(String testPlanGuid) {
