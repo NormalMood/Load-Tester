@@ -68,4 +68,10 @@ export class TestPlanService {
         )
     }
 
+    static async stopTest() {
+        return await axiosInstance.delete<Boolean>(
+            BASE_API_URL + '/test-plan/result'
+        )
+    }
+
 }

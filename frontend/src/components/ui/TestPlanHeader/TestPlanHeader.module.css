@@ -3,7 +3,6 @@
     align-items: center;
     justify-content: center;
     height: 60px;
-    cursor: pointer;
     position: relative;
 }
 
@@ -15,14 +14,47 @@
 .startButtonContainer {
     display: flex;
     right: 0;
-    padding: 10px;
+    padding: 7px;
     background-color: #111212;
     border-radius: 50%;
     position: absolute;
+    margin-right: 34px;
+    cursor: pointer;
 }
 
 .startButton {
     margin-right: -2px;
     width: 14px;
     height: 16px;
+}
+
+.startButtonContainerDisabled {
+    pointer-events: none;
+}
+
+.stopButtonContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #111212;
+    border-radius: 5px;
+    position: absolute;
+    right: 0;
+    cursor: pointer;
+}
+
+.stopButton {
+    width: 12px;
+    height: 12px;
+    background-color: #69FF46;
+    border-radius: 2px;
+    margin: 8px;
+}
+
+.stopButtonContainerDisabled {
+    pointer-events: none;
+}
+
+.stopButtonContainerDisabled > * {
+    background-color: #303333;
 }

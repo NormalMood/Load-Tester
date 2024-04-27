@@ -1,6 +1,6 @@
 .testScenarios {
     display: grid;
-    grid-template-columns: 270px auto;
+    grid-template-columns: 285px auto;
     column-gap: 30px;
     height: 100%;
 

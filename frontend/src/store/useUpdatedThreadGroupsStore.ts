@@ -1,9 +1,6 @@
 import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
-import { enableMapSet } from 'immer'
 import { IThreadGroup } from '../@types/interfaces/IThreadGroup';
-
-enableMapSet();
 
 interface IUseUpdatedThreadGroupsStore {
     threadGroup: IThreadGroup | null;
